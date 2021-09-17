@@ -230,7 +230,7 @@ CheckOptions:
   - key:             misc-definitions-in-headers.UseHeaderFileExtension
     value:           'true'
   - key:             misc-throw-by-value-catch-by-reference.MaxSize
-    value:           '-1'
+    value:           '0'
   - key:             cppcoreguidelines-avoid-magic-numbers.IgnorePowersOf2IntegerValues
     value:           'false'
   - key:             google-readability-namespace-comments.SpacesBeforeComments
@@ -308,7 +308,7 @@ CheckOptions:
   - key:             readability-identifier-naming.GetConfigPerFile
     value:           'true'
   - key:             cert-err61-cpp.MaxSize
-    value:           '-1'
+    value:           '0'
   - key:             hicpp-member-init.UseAssignment
     value:           'false'
   - key:             modernize-use-default-member-init.UseAssignment
@@ -378,7 +378,7 @@ CheckOptions:
   - key:             bugprone-suspicious-string-compare.StringCompareLikeFunctions
     value:           ''
   - key:             cert-err09-cpp.MaxSize
-    value:           '-1'
+    value:           '0'
   - key:             hicpp-use-equals-default.IgnoreMacros
     value:           'true'
   - key:             modernize-use-noexcept.ReplacementString

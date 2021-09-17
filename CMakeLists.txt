@@ -6,7 +6,6 @@ project(
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
-include(CTest)
 include(FetchContent)
 if(${CMAKE_VERSION} VERSION_LESS 3.14)
 	include(cmake/add_FetchContent_MakeAvailable.cmake)
@@ -16,5 +15,8 @@ add_executable(calc_app ./src/calc/main.cpp)
 target_link_libraries(calc_app PRIVATE sum_lib CLI11)
 target_compile_features(calc_app PUBLIC cxx_std_11)
 
+include_directories(src)
+
 add_subdirectory(src)
+add_subdirectory(tests)
 add_subdirectory(extras)

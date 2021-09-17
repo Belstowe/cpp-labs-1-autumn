@@ -17,7 +17,7 @@ function(set_compile_options target_name)
     set_target_properties(
       ${target_name}
       PROPERTIES
-        CXX_CLANG_TIDY ${CLANG_TIDY_EXE}
+      	CXX_CLANG_TIDY ${CLANG_TIDY_EXE}
     )
   endif()
 endfunction()

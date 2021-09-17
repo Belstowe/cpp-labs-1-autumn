@@ -8,6 +8,8 @@ file(GLOB_RECURSE HEADER_FILES
 
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
 include_directories(
 	"${CMAKE_SOURCE_DIR}/src"
 	)

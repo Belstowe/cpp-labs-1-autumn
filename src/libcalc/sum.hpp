@@ -2,5 +2,5 @@
 
 class Summator {
 	public:
-		double sum(double , double );
+		static double sum(double , double );
 };

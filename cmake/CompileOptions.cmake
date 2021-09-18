@@ -1,6 +1,6 @@
 function(set_compile_options target_name)
-  if(MSVS)
-    target_compile_options(${target_name} PRIVATE /W4 /Wx)
+  if(MSVC)
+    target_compile_options(${target_name} PRIVATE /W4 /WX)
   else()
     target_compile_options(${target_name} PRIVATE -Wall -Wextra -Werror -pedantic)
   endif()

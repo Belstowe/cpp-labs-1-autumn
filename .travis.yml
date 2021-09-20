@@ -1,6 +1,6 @@
 language: cpp
 
-os: linux
+os: freebsd
 
 compiler:
   - clang++
@@ -9,7 +9,4 @@ compiler:
 script:
   - find src/ tests/ -regex '.*\.\(cpp\|hpp\|h\)' -exec clang-format -style=file -i {} \; && git diff --exit-code
   - mkdir build
-  - cmake --build . --target ./build
-  - cd build && make
-
-dist: xenial
+  - cd build && cmake .. && make

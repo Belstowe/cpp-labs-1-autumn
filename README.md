@@ -1,4 +1,4 @@
-## Современные технологии программирования [![Build Status](https://api.travis-ci.com/csc-cpp2021/rdb-Belstowe.svg?branch=master)](https://app.travis-ci.com/github/csc-cpp2021/rdb-Belstowe)
+## Современные технологии программирования [![Build Status](https://api.travis-ci.com/Belstowe/rdb-Belstowe.svg?token=gxuG4wYWts2Mz5xdtTjS&branch=main)](https://app.travis-ci.com/github/Belstowe/rdb-Belstowe)
 Ковалев Максим Игоревич, гр. ИВ-923. Лабораторная работа #1.
 <table>
   <tr>

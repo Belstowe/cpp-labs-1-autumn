@@ -1,4 +1,4 @@
-## Современные технологии программирования
+## Современные технологии программирования [![Build Status](https://api.travis-ci.com/csc-cpp2021/rdb-Belstowe.svg?branch=master)](https://app.travis-ci.com/github/csc-cpp2021/rdb-Belstowe)
 Ковалев Максим Игоревич, гр. ИВ-923. Лабораторная работа #1.
 <table>
   <tr>
@@ -18,8 +18,7 @@
 ## Установка
 ```bash
 mkdir build
-cd build
-cmake ..
-make
+cmake -S . -B build
+cd build && make
 ```
 Исполнительный файл `calc_app` будет находиться в директории `build`. Тестировочный файл `calc_test` будет располагаться в директории `build/tests`.

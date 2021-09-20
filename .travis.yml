@@ -1,0 +1,15 @@
+language: cpp
+
+os: linux
+
+compiler:
+  - clang++
+  - g++
+
+script:
+  - find src/ tests/ -regex '.*\.\(cpp\|hpp\|h\)' -exec clang-format -style=file -i {} \; && git diff --exit-code
+  - mkdir build
+  - cmake --build . --target ./build
+  - cd build && make
+
+dist: xenial

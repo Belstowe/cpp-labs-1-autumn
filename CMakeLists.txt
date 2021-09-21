@@ -15,6 +15,8 @@ if(${CMAKE_VERSION} VERSION_LESS 3.14)
 	include(${CMAKE_MODULE_PATH}/add_FetchContent_MakeAvailable.cmake)
 endif()
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
 add_executable(calc_app ./src/calc/main.cpp)
 target_link_libraries(calc_app PRIVATE sum_lib CLI11)
 set_compile_options(calc_app)

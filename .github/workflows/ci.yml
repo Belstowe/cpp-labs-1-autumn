@@ -46,4 +46,4 @@ jobs:
           
       # Runs tests on Linux
       - name: Test
-        run: ./build/tests/calc_test
+        run: ./build/calc_test

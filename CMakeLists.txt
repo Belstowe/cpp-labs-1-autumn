@@ -17,10 +17,6 @@ endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-add_executable(calc_app ./src/calc/main.cpp)
-target_link_libraries(calc_app PRIVATE sum_lib CLI11)
-set_compile_options(calc_app)
-
 include_directories(src)
 
 add_subdirectory(src)

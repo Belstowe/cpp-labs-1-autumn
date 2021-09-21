@@ -21,11 +21,11 @@ int main(int argc, char* argv[])
     }
 
     if ((app.count("--first") != 1) || (app.count("--second") != 1)) {
-        std::cout << "Valid use is:" << std::endl;
-        std::cout << " $ ./calc_app --first {num} --second {num}" << std::endl;
+        std::cout << "Valid use is:\n";
+        std::cout << " $ ./calc_app --first {num} --second {num}\n";
         return 0;
     }
 
-    std::cout << Summator::sum(a, b) << std::endl;
+    std::cout << Summator::sum(a, b) << '\n';
     return 0;
 }

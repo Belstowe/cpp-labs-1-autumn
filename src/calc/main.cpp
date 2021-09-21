@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-int main(int argc, char** argv)
+int main(int argc, char* argv[])
 {
     CLI::App app("BelMoProTech Lab #1");
 

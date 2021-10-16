@@ -1,2 +1,2 @@
-add_subdirectory(libcalc)
-add_subdirectory(calc)
+add_subdirectory(librdb)
+add_subdirectory(sql_parser)

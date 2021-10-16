@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <libcalc/sum.hpp>
+#include <librdb/sum.hpp>
 
 TEST(summatorTest, accuracyCheck)
 {

@@ -10,3 +10,6 @@ build_*/
 
 # CMake
 cmake-build-*/
+
+# Visual Studio Code
+.vscode/

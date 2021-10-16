@@ -1,18 +1,19 @@
 #include "CLI/App.hpp"
 #include "CLI/Config.hpp"
 #include "CLI/Formatter.hpp"
-#include "sum.hpp"
 
 #include <iostream>
+#include <string>
 
 int main(int argc, char* argv[])
 {
-    CLI::App app("BelMoProTech Lab #1");
+    CLI::App app("SQLParser");
 
-    double a = .0;
-    double b = .0;
-    app.add_option<double>("--first", a, "First number");
-    app.add_option<double>("--second", b, "Second number");
+    std::string input_file;
+    std::string output_file;
+
+    app.add_option<std::string>("-i,--input", input_file, "Input File");
+    app.add_option<std::string>("-o,--output", output_file, "Output File");
 
     try {
         app.parse(argc, argv);
@@ -20,12 +21,5 @@ int main(int argc, char* argv[])
         return app.exit(e);
     }
 
-    if ((app.count("--first") != 1) || (app.count("--second") != 1)) {
-        std::cout << "Valid use is:\n";
-        std::cout << " $ ./calc_app --first {num} --second {num}\n";
-        return 0;
-    }
-
-    std::cout << Summator::sum(a, b) << '\n';
     return 0;
 }

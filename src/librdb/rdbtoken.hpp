@@ -40,6 +40,8 @@ public:
     int type_set(const Token::TokenType&);
     std::string_view lexeme_get();
     int lexeme_set(const std::string&);
+    // static std::string_view type_to_str(const Token::TokenType&);
+    static Token::TokenType str_to_type(const std::string&);
 
 private:
     TokenType type;

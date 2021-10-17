@@ -139,3 +139,70 @@ TEST(LexerTest, HandlesStrInput)
         token_lexeme_expected_seq.pop();
     }
 }
+
+TEST(LexerTest, HandlesIdKwInput)
+{
+    std::istringstream instream(
+            "TEXT tXt = (\"{Never gonna give you up! Never gonna let you "
+            "down!}\");\nint i=0;\nReAl PI =3.1415;");
+    Lexer lexer(instream);
+    std::queue<Token> token_seq;
+    std::queue<Token::TokenType> token_type_expected_seq(
+            {Token::KwText,
+             Token::VarId,
+             Token::Operation,
+             Token::ParenthesisOpening,
+             Token::VarText,
+             Token::ParenthesisClosing,
+             Token::Semicolon,
+             Token::KwInt,
+             Token::VarId,
+             Token::Operation,
+             Token::VarInt,
+             Token::Semicolon,
+             Token::KwReal,
+             Token::VarId,
+             Token::Operation,
+             Token::VarReal,
+             Token::Semicolon,
+             Token::EndOfFile});
+    std::queue<std::string_view> token_lexeme_expected_seq(
+            {std::string_view("text"),
+             std::string_view("txt"),
+             std::string_view("="),
+             std::string_view("("),
+             std::string_view(
+                     "{Never gonna give you up! Never gonna let you down!}"),
+             std::string_view(")"),
+             std::string_view(";"),
+             std::string_view("int"),
+             std::string_view("i"),
+             std::string_view("="),
+             std::string_view("0"),
+             std::string_view(";"),
+             std::string_view("real"),
+             std::string_view("pi"),
+             std::string_view("="),
+             std::string_view("3.1415"),
+             std::string_view(";"),
+             std::string_view()});
+
+    while (true) {
+        token_seq.push(lexer.get());
+        if (token_seq.back().type_get() == Token::EndOfFile)
+            break;
+    }
+
+    EXPECT_EQ(token_type_expected_seq.size(), token_seq.size());
+    int count = token_type_expected_seq.size();
+    for (int i = 0; i < count; i++) {
+        ASSERT_EQ(
+                token_seq.front().type_get(), token_type_expected_seq.front());
+        ASSERT_EQ(
+                token_seq.front().lexeme_get(),
+                token_lexeme_expected_seq.front());
+        token_seq.pop();
+        token_type_expected_seq.pop();
+        token_lexeme_expected_seq.pop();
+    }
+}

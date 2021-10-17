@@ -246,10 +246,26 @@ Token Lexer::token_extract_str(std::string& lexeme)
 
 Token Lexer::token_extract_id(std::string& lexeme)
 {
-    // TBD
     char c = '\0';
-    instream->get(c);
-    return Token(Token::Unknown, lexeme);
+    int next_char = instream->peek();
+    while ((('0' <= next_char) && (next_char <= '9'))
+           || (('a' <= std::tolower(next_char))
+               && (std::tolower(next_char) <= 'z'))) {
+        instream->get(c);
+        lexeme += static_cast<char>(std::tolower(c));
+        next_char = instream->peek();
+    }
+
+    if (c == '\0') {
+        return Token(Token::Unknown, lexeme);
+    }
+
+    Token::TokenType kw_token = Token::str_to_type(lexeme);
+    if (kw_token == Token::Unknown) {
+        return Token(Token::VarId, lexeme);
+    }
+
+    return Token(kw_token, lexeme);
 }
 
 Token Lexer::get()

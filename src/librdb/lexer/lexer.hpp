@@ -2,7 +2,9 @@
 
 #include "../rdbtoken.hpp"
 #include <iostream>
+#include <unordered_map>
 
+using rdb::parser::Token;
 namespace rdb::parser {
 class Lexer {
 public:

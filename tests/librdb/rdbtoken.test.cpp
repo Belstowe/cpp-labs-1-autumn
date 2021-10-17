@@ -2,24 +2,26 @@
 
 #include "librdb/rdbtoken.hpp"
 
+using rdb::parser::Token;
+
 TEST(TokenTest, DataStability)
 {
-    rdb::parser::Token::TokenType type = rdb::parser::Token::Operation;
+    Token::TokenType type = Token::Operation;
     std::string lexeme("<=");
-    rdb::parser::Token token(type, lexeme);
+    Token token(type, lexeme);
 
     ASSERT_EQ(type, token.type_get());
     ASSERT_EQ(lexeme, token.lexeme_get());
 
-    token = rdb::parser::Token();
+    token = Token();
 
-    ASSERT_EQ(type, rdb::parser::Token::Operation);
+    ASSERT_EQ(type, Token::Operation);
     ASSERT_EQ(lexeme, "<=");
 
-    rdb::parser::Token token2(type, lexeme);
-    type = rdb::parser::Token::Unknown;
+    Token token2(type, lexeme);
+    type = Token::Unknown;
     lexeme = std::string();
 
     ASSERT_EQ(token2.lexeme_get(), "<=");
-    ASSERT_EQ(token2.type_get(), rdb::parser::Token::Operation);
+    ASSERT_EQ(token2.type_get(), Token::Operation);
 }

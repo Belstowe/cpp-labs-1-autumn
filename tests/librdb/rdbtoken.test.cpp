@@ -3,7 +3,7 @@
 #include "librdb/rdbtoken.hpp"
 
 TEST(TokenTest, DataStability) {
-    rdb::parser::TokenType type = rdb::parser::Operation;
+    rdb::parser::Token::TokenType type = rdb::parser::Token::Operation;
     std::string lexeme("<=");
     rdb::parser::Token token(type, lexeme);
 
@@ -12,13 +12,13 @@ TEST(TokenTest, DataStability) {
 
     token = rdb::parser::Token();
 
-    ASSERT_EQ(type, rdb::parser::Operation);
+    ASSERT_EQ(type, rdb::parser::Token::Operation);
     ASSERT_EQ(lexeme, "<=");
 
     rdb::parser::Token token2(type, lexeme);
-    type = rdb::parser::Unknown;
+    type = rdb::parser::Token::Unknown;
     lexeme = std::string();
 
     ASSERT_EQ(token2.lexeme_get(), "<=");
-    ASSERT_EQ(token2.type_get(), rdb::parser::Operation);
+    ASSERT_EQ(token2.type_get(), rdb::parser::Token::Operation);
 }

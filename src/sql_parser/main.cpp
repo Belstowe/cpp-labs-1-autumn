@@ -37,9 +37,9 @@ int main(int argc, char* argv[])
     while (true) {
         current_token = lexer.get();
         std::cout << '(' << current_token.type_get() << ", " << current_token.lexeme_get() << ')' << '\n';
-        if (current_token.type_get() == rdb::parser::EndOfFile)
+        if (current_token.type_get() == rdb::parser::Token::EndOfFile)
             break;
-        if (current_token.type_get() == rdb::parser::Unknown)
+        if (current_token.type_get() == rdb::parser::Token::Unknown)
             std::clog << current_token.lexeme_get() << ": Unknown type\n";
     }
 

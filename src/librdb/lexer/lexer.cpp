@@ -46,7 +46,7 @@ Token Lexer::token_extract_begin(std::string &lexeme) {
 
         case EOF:
         case '\0':
-            return Token(EndOfFile, lexeme);
+            return Token(Token::EndOfFile, lexeme);
     }
     if (('1' <= c) && (c <= '9'))
         return token_extract_int(lexeme);
@@ -54,7 +54,7 @@ Token Lexer::token_extract_begin(std::string &lexeme) {
         return token_extract_id(lexeme);
 
     c = instream->get();
-    return Token(Unknown, lexeme);
+    return Token(Token::Unknown, lexeme);
 }
 
 Token Lexer::token_extract_sym(std::string &lexeme) {
@@ -64,25 +64,25 @@ Token Lexer::token_extract_sym(std::string &lexeme) {
 
     switch (c) {
         case '(':
-            return Token(ParenthesisOpening, lexeme);
+            return Token(Token::ParenthesisOpening, lexeme);
         
         case ')':
-            return Token(ParenthesisClosing, lexeme);
+            return Token(Token::ParenthesisClosing, lexeme);
 
         case '{':
-            return Token(CurlyBracketOpening, lexeme);
+            return Token(Token::CurlyBracketOpening, lexeme);
 
         case '}':
-            return Token(CurlyBracketClosing, lexeme);
+            return Token(Token::CurlyBracketClosing, lexeme);
 
         case ';':
-            return Token(Semicolon, lexeme);
+            return Token(Token::Semicolon, lexeme);
 
         case ',':
-            return Token(Comma, lexeme);
+            return Token(Token::Comma, lexeme);
     }
 
-    return Token(Unknown, lexeme);
+    return Token(Token::Unknown, lexeme);
 }
 
 Token Lexer::token_extract_op(std::string &lexeme) {
@@ -95,51 +95,51 @@ Token Lexer::token_extract_op(std::string &lexeme) {
     }
 
     if (std::end(valid_operations) != std::find(std::begin(valid_operations), std::end(valid_operations), lexeme))
-        return Token(Operation, lexeme);
+        return Token(Token::Operation, lexeme);
     
-    return Token(Unknown, lexeme);
+    return Token(Token::Unknown, lexeme);
 }
 
 Token Lexer::token_extract_sign(std::string &lexeme) {
     // TBD
     char c;
     instream->get(c);
-    return Token(Unknown, lexeme);
+    return Token(Token::Unknown, lexeme);
 }
 
 Token Lexer::token_extract_int0(std::string &lexeme) {
     // TBD
     char c;
     instream->get(c);
-    return Token(Unknown, lexeme);
+    return Token(Token::Unknown, lexeme);
 }
 
 Token Lexer::token_extract_int(std::string &lexeme) {
     // TBD
     char c;
     instream->get(c);
-    return Token(Unknown, lexeme);
+    return Token(Token::Unknown, lexeme);
 }
 
 Token Lexer::token_extract_real(std::string &lexeme) {
     // TBD
     char c;
     instream->get(c);
-    return Token(Unknown, lexeme);
+    return Token(Token::Unknown, lexeme);
 }
 
 Token Lexer::token_extract_str(std::string &lexeme) {
     // TBD
     char c;
     instream->get(c);
-    return Token(Unknown, lexeme);
+    return Token(Token::Unknown, lexeme);
 }
 
 Token Lexer::token_extract_id(std::string &lexeme) {
     // TBD
     char c;
     instream->get(c);
-    return Token(Unknown, lexeme);
+    return Token(Token::Unknown, lexeme);
 }
 
 Token Lexer::get() {
@@ -149,5 +149,5 @@ Token Lexer::get() {
 
 Token Lexer::peek() {
     // TBD
-    return Token(EndOfFile, "");
+    return Token(Token::EndOfFile, "");
 }

@@ -6,12 +6,10 @@ if(${CMAKE_VERSION} VERSION_LESS 3.14)
 	include(${CMAKE_MODULE_PATH}/add_FetchContent_MakeAvailable.cmake)
 endif()
 
-
-
 cmake_minimum_required(VERSION 3.11..3.21)
 
 project(
-	BelMoProTech
+	SQLParser
 	VERSION 0.1
 	LANGUAGES CXX)
 

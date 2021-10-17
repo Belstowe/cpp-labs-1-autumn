@@ -31,9 +31,10 @@ int main(int argc, char* argv[])
     }
 
     input_file_stream.open(input_file, std::ifstream::in);
-    if (*opt_o)
+    if (*opt_o) {
         output_file_stream.open(
                 output_file, std::ofstream::out | std::ofstream::app);
+    }
 
     rdb::parser::Lexer lexer(input_file_stream);
     rdb::parser::Token current_token;
@@ -41,15 +42,18 @@ int main(int argc, char* argv[])
         current_token = lexer.get();
         std::cout << '(' << current_token.type_get() << ", "
                   << current_token.lexeme_get() << ')' << '\n';
-        if (current_token.type_get() == rdb::parser::Token::EndOfFile)
+        if (current_token.type_get() == rdb::parser::Token::EndOfFile) {
             break;
-        if (current_token.type_get() == rdb::parser::Token::Unknown)
+        }
+        if (current_token.type_get() == rdb::parser::Token::Unknown) {
             std::clog << current_token.lexeme_get() << ": Unknown type\n";
+        }
     }
 
     input_file_stream.close();
-    if (output_file_stream.is_open())
+    if (output_file_stream.is_open()) {
         output_file_stream.close();
+    }
 
     return 0;
 }

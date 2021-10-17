@@ -59,3 +59,41 @@ TEST(LexerTest, HandlesExprInput)
         token_expected_seq.pop();
     }
 }
+
+TEST(LexerTest, HandlesIntInput)
+{
+    std::istringstream instream("(1.345 <= 4 )(4>.2)( 0< 66 )");
+    rdb::parser::Lexer lexer(instream);
+    std::queue<rdb::parser::Token> token_seq;
+    std::queue<rdb::parser::Token::TokenType> token_expected_seq(
+            {rdb::parser::Token::ParenthesisOpening,
+             rdb::parser::Token::VarReal,
+             rdb::parser::Token::Operation,
+             rdb::parser::Token::VarInt,
+             rdb::parser::Token::ParenthesisClosing,
+             rdb::parser::Token::ParenthesisOpening,
+             rdb::parser::Token::VarInt,
+             rdb::parser::Token::Operation,
+             rdb::parser::Token::VarReal,
+             rdb::parser::Token::ParenthesisClosing,
+             rdb::parser::Token::ParenthesisOpening,
+             rdb::parser::Token::VarInt,
+             rdb::parser::Token::Operation,
+             rdb::parser::Token::VarInt,
+             rdb::parser::Token::ParenthesisClosing,
+             rdb::parser::Token::EndOfFile});
+
+    while (true) {
+        token_seq.push(lexer.get());
+        if (token_seq.back().type_get() == rdb::parser::Token::EndOfFile)
+            break;
+    }
+
+    EXPECT_EQ(token_expected_seq.size(), token_seq.size());
+    int count = token_expected_seq.size();
+    for (int i = 0; i < count; i++) {
+        EXPECT_EQ(token_seq.front().type_get(), token_expected_seq.front());
+        token_seq.pop();
+        token_expected_seq.pop();
+    }
+}

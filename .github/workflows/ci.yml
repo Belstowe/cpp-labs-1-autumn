@@ -75,7 +75,7 @@ jobs:
       - name: Run GTest executable
         working-directory: ${{runner.workspace}}/build_test/tests
         shell: bash
-        run: ./${{PROJECT_NAME}}_test
+        run: ./${{ env.PROJECT_NAME }}_test
 
   build-linux-clang:
     # Making on a Linux distribution
@@ -114,4 +114,4 @@ jobs:
       - name: Run GTest executable
         working-directory: ${{runner.workspace}}/build_test/tests
         shell: bash
-        run: ./${{PROJECT_NAME}}_test
+        run: ./${{ env.PROJECT_NAME }}_test

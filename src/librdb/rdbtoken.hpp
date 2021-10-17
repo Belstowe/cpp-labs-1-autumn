@@ -3,6 +3,8 @@
 #include <string_view>
 
 namespace rdb::parser {
+class Token {
+public:
     typedef enum TokenType {
         KwCreate,
         KwSelect,
@@ -17,25 +19,29 @@ namespace rdb::parser {
         KwWhere,
         KwFrom,
         KwInto,
+        VarInt,
+        VarReal,
+        VarText,
+        VarId,
+        Operation,
         CurlyBracketOpening,
         CurlyBracketClosing,
         ParenthesisOpening,
         ParenthesisClosing,
         Comma,
         Semicolon,
-        EndOfFile
+        EndOfFile,
+        Unknown
     } TokenType;
 
-    class Token {
-        private:
-            TokenType type;
-            std::string_view lexeme;
+    explicit Token(const Token::TokenType& = Unknown, const std::string& = "");
+    Token::TokenType type_get();
+    int type_set(const Token::TokenType&);
+    std::string_view lexeme_get();
+    int lexeme_set(std::string);
 
-        public:
-            explicit Token(const TokenType &, const std::string &);
-            TokenType type_get();
-            int type_set(TokenType);
-            std::string_view lexeme_get();
-            int lexeme_set(std::string_view);
-    };
+private:
+    TokenType type;
+    std::string lexeme;
+};
 }

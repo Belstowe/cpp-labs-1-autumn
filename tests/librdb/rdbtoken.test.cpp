@@ -2,7 +2,8 @@
 
 #include "librdb/rdbtoken.hpp"
 
-TEST(TokenTest, DataStability) {
+TEST(TokenTest, DataStability)
+{
     rdb::parser::Token::TokenType type = rdb::parser::Token::Operation;
     std::string lexeme("<=");
     rdb::parser::Token token(type, lexeme);

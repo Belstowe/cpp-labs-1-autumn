@@ -35,13 +35,13 @@ namespace rdb::parser {
     class Token {
         private:
             TokenType type;
-            std::string_view lexeme;
+            std::string lexeme;
 
         public:
-            explicit Token(const TokenType &, const std::string &);
+            explicit Token(const TokenType & = Unknown, const std::string & = "");
             TokenType type_get();
-            int type_set(TokenType);
+            int type_set(const TokenType &);
             std::string_view lexeme_get();
-            int lexeme_set(std::string_view);
+            int lexeme_set(std::string);
     };
 }

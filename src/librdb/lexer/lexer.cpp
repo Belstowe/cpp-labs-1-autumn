@@ -9,8 +9,8 @@ Lexer::Lexer(std::istream &source) {
 }
 
 Token Lexer::token_extract_begin(std::string &lexeme) {
-    char c;
-    while (std::find(std::begin(Lexer::spaces), std::end(Lexer::spaces), instream->peek()))
+    int c;
+    while (std::end(Lexer::spaces) != std::find(std::begin(Lexer::spaces), std::end(Lexer::spaces), instream->peek()))
         c = instream->get();
     c = instream->peek();
 
@@ -44,19 +44,20 @@ Token Lexer::token_extract_begin(std::string &lexeme) {
             c = instream->get();
             return token_extract_str(lexeme);
 
-        case '\0':
+        case EOF:
             return Token(EndOfFile, lexeme);
     }
-    if ('1' <= c <= '9')
+    if (('1' <= c) && (c <= '9'))
         return token_extract_int(lexeme);
-    if ('a' <= std::tolower(c) <= 'z')
+    if (('a' <= std::tolower(c)) && (std::tolower(c) <= 'z'))
         return token_extract_id(lexeme);
 
     return Token(Unknown, lexeme);
 }
 
 Token Lexer::token_extract_sym(std::string &lexeme) {
-    char c = instream->get();
+    char c;
+    instream->get(c);
     lexeme += c;
 
     switch (c) {
@@ -78,15 +79,20 @@ Token Lexer::token_extract_sym(std::string &lexeme) {
         case ',':
             return Token(Comma, lexeme);
     }
+
+    return Token(Unknown, lexeme);
 }
 
 Token Lexer::token_extract_op(std::string &lexeme) {
     static const std::string valid_operations[] = {"!=", "=", "<=", ">=", "<", ">"};
 
-    while (std::find(std::begin(Lexer::operations_syms), std::end(Lexer::operations_syms), instream->peek()))
-        lexeme += instream->get();
+    char c;
+    while (std::end(Lexer::operations_syms) != std::find(std::begin(Lexer::operations_syms), std::end(Lexer::operations_syms), instream->peek())) {
+        instream->get(c);
+        lexeme += c;
+    }
 
-    if (std::find(std::begin(valid_operations), std::end(valid_operations), lexeme))
+    if (std::end(valid_operations) != std::find(std::begin(valid_operations), std::end(valid_operations), lexeme))
         return Token(Operation, lexeme);
     
     return Token(Unknown, lexeme);

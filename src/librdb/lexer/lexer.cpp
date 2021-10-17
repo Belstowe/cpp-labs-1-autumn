@@ -148,7 +148,7 @@ Token Lexer::token_extract_sign(std::string& lexeme)
     if (('1' <= instream->peek()) && (instream->peek() <= '9')) {
         return token_extract_int(lexeme);
     }
-    
+
     return Token(Token::Unknown, lexeme);
 }
 

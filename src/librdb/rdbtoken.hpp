@@ -17,13 +17,19 @@ namespace rdb::parser {
         KwWhere,
         KwFrom,
         KwInto,
+        VarInt,
+        VarReal,
+        VarText,
+        VarId,
+        Operation,
         CurlyBracketOpening,
         CurlyBracketClosing,
         ParenthesisOpening,
         ParenthesisClosing,
         Comma,
         Semicolon,
-        EndOfFile
+        EndOfFile,
+        Unknown
     } TokenType;
 
     class Token {

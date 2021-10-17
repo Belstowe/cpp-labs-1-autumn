@@ -1,8 +1,11 @@
 #include "lexer.hpp"
 
+#include <algorithm>
+#include <array>
 #include <cctype>
 
-using namespace rdb::parser;
+using rdb::parser::Lexer;
+using rdb::parser::Token;
 
 Lexer::Lexer(std::istream& source)
 {
@@ -11,13 +14,15 @@ Lexer::Lexer(std::istream& source)
 
 Token Lexer::token_extract_begin(std::string& lexeme)
 {
-    int c;
+    int c = 0;
     while (std::end(Lexer::spaces)
            != std::find(
                    std::begin(Lexer::spaces),
                    std::end(Lexer::spaces),
-                   instream->peek()))
-        c = instream->get();
+                   instream->peek())) {
+        instream->get();
+    }
+
     c = instream->peek();
 
     switch (c) {
@@ -47,25 +52,30 @@ Token Lexer::token_extract_begin(std::string& lexeme)
         return token_extract_real(lexeme);
 
     case '"':
-        c = instream->get();
+        instream->get();
         return token_extract_str(lexeme);
 
     case EOF:
     case '\0':
         return Token(Token::EndOfFile, lexeme);
-    }
-    if (('1' <= c) && (c <= '9'))
-        return token_extract_int(lexeme);
-    if (('a' <= std::tolower(c)) && (std::tolower(c) <= 'z'))
-        return token_extract_id(lexeme);
 
-    c = instream->get();
+    default:
+        break;
+    }
+    if (('1' <= c) && (c <= '9')) {
+        return token_extract_int(lexeme);
+    }
+    if (('a' <= std::tolower(c)) && (std::tolower(c) <= 'z')) {
+        return token_extract_id(lexeme);
+    }
+
+    instream->get();
     return Token(Token::Unknown, lexeme);
 }
 
 Token Lexer::token_extract_sym(std::string& lexeme)
 {
-    char c;
+    char c = '\0';
     instream->get(c);
     lexeme += c;
 
@@ -87,6 +97,9 @@ Token Lexer::token_extract_sym(std::string& lexeme)
 
     case ',':
         return Token(Token::Comma, lexeme);
+
+    default:
+        break;
     }
 
     return Token(Token::Unknown, lexeme);
@@ -94,10 +107,10 @@ Token Lexer::token_extract_sym(std::string& lexeme)
 
 Token Lexer::token_extract_op(std::string& lexeme)
 {
-    static const std::string valid_operations[]
+    static const std::array<std::string, 6> valid_operations
             = {"!=", "=", "<=", ">=", "<", ">"};
 
-    char c;
+    char c = '\0';
     while (std::end(Lexer::operations_syms)
            != std::find(
                    std::begin(Lexer::operations_syms),
@@ -111,8 +124,9 @@ Token Lexer::token_extract_op(std::string& lexeme)
         != std::find(
                 std::begin(valid_operations),
                 std::end(valid_operations),
-                lexeme))
+                lexeme)) {
         return Token(Token::Operation, lexeme);
+    }
 
     return Token(Token::Unknown, lexeme);
 }
@@ -120,7 +134,7 @@ Token Lexer::token_extract_op(std::string& lexeme)
 Token Lexer::token_extract_sign(std::string& lexeme)
 {
     // TBD
-    char c;
+    char c = '\0';
     instream->get(c);
     return Token(Token::Unknown, lexeme);
 }
@@ -128,7 +142,7 @@ Token Lexer::token_extract_sign(std::string& lexeme)
 Token Lexer::token_extract_int0(std::string& lexeme)
 {
     // TBD
-    char c;
+    char c = '\0';
     instream->get(c);
     return Token(Token::Unknown, lexeme);
 }
@@ -136,7 +150,7 @@ Token Lexer::token_extract_int0(std::string& lexeme)
 Token Lexer::token_extract_int(std::string& lexeme)
 {
     // TBD
-    char c;
+    char c = '\0';
     instream->get(c);
     return Token(Token::Unknown, lexeme);
 }
@@ -144,7 +158,7 @@ Token Lexer::token_extract_int(std::string& lexeme)
 Token Lexer::token_extract_real(std::string& lexeme)
 {
     // TBD
-    char c;
+    char c = '\0';
     instream->get(c);
     return Token(Token::Unknown, lexeme);
 }
@@ -152,7 +166,7 @@ Token Lexer::token_extract_real(std::string& lexeme)
 Token Lexer::token_extract_str(std::string& lexeme)
 {
     // TBD
-    char c;
+    char c = '\0';
     instream->get(c);
     return Token(Token::Unknown, lexeme);
 }
@@ -160,19 +174,20 @@ Token Lexer::token_extract_str(std::string& lexeme)
 Token Lexer::token_extract_id(std::string& lexeme)
 {
     // TBD
-    char c;
+    char c = '\0';
     instream->get(c);
     return Token(Token::Unknown, lexeme);
 }
 
 Token Lexer::get()
 {
-    std::string lexeme("");
+    std::string lexeme;
     return token_extract_begin(lexeme);
 }
 
 Token Lexer::peek()
 {
     // TBD
-    return Token(Token::EndOfFile, "");
+    std::string lexeme;
+    return token_extract_begin(lexeme);
 }

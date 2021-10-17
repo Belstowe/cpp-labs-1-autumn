@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <string_view>
 
 namespace rdb::parser {
@@ -38,7 +39,7 @@ public:
     Token::TokenType type_get();
     int type_set(const Token::TokenType&);
     std::string_view lexeme_get();
-    int lexeme_set(std::string);
+    int lexeme_set(const std::string&);
 
 private:
     TokenType type;

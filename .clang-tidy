@@ -9,7 +9,9 @@ Checks: '
     -modernize-use-nodiscard,
     -modernize-use-trailing-return-type,
     -cppcoreguidelines-owning-memory,
-    -google-runtime-references
+    -google-runtime-references,
+    -cert-err58-cpp,
+    -bugprone-exception-escape
     '
 WarningsAsErrors: ''
 HeaderFilterRegex: ''

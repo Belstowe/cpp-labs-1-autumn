@@ -206,3 +206,20 @@ TEST(LexerTest, HandlesIdKwInput)
         token_lexeme_expected_seq.pop();
     }
 }
+
+TEST(LexerTest, LexerPeekTest)
+{
+    std::istringstream instream("INT a = 0;");
+    Lexer lexer(instream);
+    Token token;
+
+    token = lexer.peek();
+    ASSERT_EQ(token.type_get(), Token::KwInt);
+    ASSERT_EQ(token.lexeme_get(), "int");
+    token = lexer.get();
+    ASSERT_EQ(token.type_get(), Token::KwInt);
+    ASSERT_EQ(token.lexeme_get(), "int");
+    token = lexer.peek();
+    ASSERT_EQ(token.type_get(), Token::VarId);
+    ASSERT_EQ(token.lexeme_get(), "a");
+}

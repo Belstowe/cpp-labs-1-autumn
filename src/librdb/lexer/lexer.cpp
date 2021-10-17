@@ -276,7 +276,9 @@ Token Lexer::get()
 
 Token Lexer::peek()
 {
-    // TBD
+    auto pos = instream->tellg();
     std::string lexeme;
-    return token_extract_begin(lexeme);
+    Token res_token = token_extract_begin(lexeme);
+    instream->seekg(pos);
+    return res_token;
 }

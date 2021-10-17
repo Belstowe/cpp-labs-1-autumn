@@ -26,5 +26,5 @@ cmake -S . -B build
 cd build && make
 ```
 Исполнительный файл `SQLParser` и тестировочный файл `SQLParser_test` будут находиться:
- * В директории `build` при сборке на Unix-системе;
- * В директории `build/<config>` (по умолчанию `<config>` = `Debug`) при сборке на Windows.
+ * В директории `build` и директории `build/tests` соответственно при сборке на Unix-системе/MinGW;
+ * В директории `build\<config>` и директории `build\tests\<config` соответственно (по умолчанию `<config>` = `Debug`) при сборке с помощью MSVC.

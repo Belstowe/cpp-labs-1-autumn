@@ -216,10 +216,32 @@ Token Lexer::token_extract_real(std::string& lexeme)
 
 Token Lexer::token_extract_str(std::string& lexeme)
 {
-    // TBD
     char c = '\0';
-    instream->get(c);
-    return Token(Token::Unknown, lexeme);
+    int next_char = instream->peek();
+    while ((next_char != '"') && (next_char != '\0') && (next_char != EOF)) {
+        if ((next_char == '\n') || (next_char == '\r')) {
+            instream->get();
+            next_char = instream->peek();
+            continue;
+        }
+        if (next_char == '\\') {
+            instream->get();
+            next_char = instream->peek();
+            if ((next_char == '\0') || (next_char == EOF)) {
+                break;
+            }
+        }
+        instream->get(c);
+        lexeme += c;
+        next_char = instream->peek();
+    }
+
+    if (next_char != '"') {
+        return Token(Token::Unknown, lexeme);
+    }
+
+    instream->get();
+    return Token(Token::VarText, lexeme);
 }
 
 Token Lexer::token_extract_id(std::string& lexeme)

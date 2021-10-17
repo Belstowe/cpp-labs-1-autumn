@@ -3,12 +3,22 @@ name: CI
 # Controls when the workflow will run
 on:
   push:
-    branches: [ main ]
+    branches: [
+      lab-02,
+      main
+    ]
   pull_request:
-    branches: [ main ]
+    branches: [
+      lab-02,
+      main
+    ]
 
   # Allows to run this workflow manually from the Actions tab
   workflow_dispatch:
+
+env:
+  BUILD_TYPE: Release
+  PROJECT_NAME: SQLParser
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -20,13 +30,15 @@ jobs:
       # Checks-out the repository under $GITHUB_WORKSPACE, so the job can access it
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: sudo apt install clang-format
       
       # Checks for code to follow LLVM format using clang-format
       - name: Check code style
-        run: find src/ tests/ -regex '.*\.\(cpp\|hpp\|h\)' -exec clang-format -style=file -i {} \; && git diff --exit-code
+        run: find src/ tests/ -regex '.*\.\(cpp\|hpp\)' -exec clang-format -style=file -i {} \; && git diff --exit-code
 
-
-  build-linux:
+  build-linux-gcc:
     # Making on a Linux distribution
     runs-on: ubuntu-latest
 
@@ -35,15 +47,71 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # Exports CC and CXX to tell CMake which compiler to use; runs CMake and make
-      - name: Run CMake with Clang
+      - name: Install Dependencies
+        run: |
+          sudo apt install ninja-build
+
+      # Some projects don't allow in-source building, so create a separate build directory
+      - name: Create Build Environment
+        run: |
+          mkdir ${{runner.workspace}}/build_test
+
+      # Use a bash shell for rgw same syntax regardless of the host OS
+      - name: Configure CMake
+        shell: bash
+        env:
+          CC: gcc
+          CXX: g++
+        working-directory: ${{runner.workspace}}/build_test
+        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -GNinja
+
+      # Exports CC and CXX to tell CMake which compiler to use; runs CMake
+      - name: Build CMake with GCC
+        working-directory: ${{runner.workspace}}/build_test
+        shell: bash
+        run: cmake --build . --config $BUILD_TYPE
+
+      # Launches testing executable
+      - name: Run GTest executable
+        working-directory: ${{runner.workspace}}/build_test/tests
+        shell: bash
+        run: ./${{PROJECT_NAME}}_test
+
+  build-linux-clang:
+    # Making on a Linux distribution
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out the repository under $GITHUB_WORKSPACE, so the job can access it
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          sudo apt install ninja-build
+
+      # Some projects don't allow in-source building, so create a separate build directory
+      - name: Create Build Environment
+        run: |
+          mkdir ${{runner.workspace}}/build_test
+
+      # Use a bash shell for rgw same syntax regardless of the host OS
+      - name: Configure CMake
+        shell: bash
         env:
           CC: clang
           CXX: clang++
-        run: |
-          mkdir build
-          cd build && cmake .. && make
-          
-      # Runs tests on Linux
-      - name: Test
-        run: ./build/calc_test
+        working-directory: ${{runner.workspace}}/build_test
+        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -GNinja
+
+      # Exports CC and CXX to tell CMake which compiler to use; runs CMake
+      - name: Build CMake with Clang
+        working-directory: ${{runner.workspace}}/build_test
+        shell: bash
+        run: cmake --build . --config $BUILD_TYPE
+
+      # Launches testing executable
+      - name: Run GTest executable
+        working-directory: ${{runner.workspace}}/build_test/tests
+        shell: bash
+        run: ./${{PROJECT_NAME}}_test

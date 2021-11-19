@@ -98,6 +98,6 @@ Token Lexer::peek()
 Token Lexer::get()
 {
     auto res_token = peek();
-    string_pos += res_token.lexeme_get().length();
+    string_pos += res_token.lexeme.length();
     return res_token;
 }

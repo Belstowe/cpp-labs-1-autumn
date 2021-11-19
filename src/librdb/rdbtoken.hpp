@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include <string_view>
 
 namespace rdb::parser {
@@ -32,17 +31,10 @@ enum class TokenType {
     EndOfFile,
     Unknown
 };
-class Token {
-public:
-    explicit Token(
-            const TokenType& = TokenType::Unknown, std::string_view = "");
-    TokenType type_get();
-    int type_set(const TokenType&);
-    std::string_view lexeme_get();
-    int lexeme_set(const std::string&);
 
-private:
+struct Token {
     TokenType type;
     std::string_view lexeme;
+    Token(TokenType type = TokenType::Unknown, std::string_view lexeme = "");
 };
 }

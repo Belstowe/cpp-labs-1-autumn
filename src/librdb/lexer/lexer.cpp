@@ -9,51 +9,38 @@ using rdb::parser::TokenType;
 
 namespace {
 struct TokenRule {
-    std::regex regex;
     TokenType tokentype;
+    std::regex regex;
 };
 
+// clang-format off
 const std::vector<TokenRule> TokenRules = {
-        {std::regex("\".*?\"", std::regex_constants::icase),
-         TokenType::VarText},
-        {std::regex(
-                 "[-+]?0\\.[0-9]+|[1-9][0-9]*\\.[0-9]+",
-                 std::regex_constants::icase),
-         TokenType::VarReal},
-        {std::regex("[-+]?0|[-+]?[1-9][0-9]*", std::regex_constants::icase),
-         TokenType::VarInt},
-        {std::regex("CREATE", std::regex_constants::icase),
-         TokenType::KwCreate},
-        {std::regex("INSERT", std::regex_constants::icase),
-         TokenType::KwInsert},
-        {std::regex("DELETE", std::regex_constants::icase),
-         TokenType::KwDelete},
-        {std::regex("DROP", std::regex_constants::icase), TokenType::KwDrop},
-        {std::regex("FROM", std::regex_constants::icase), TokenType::KwFrom},
-        {std::regex("INT", std::regex_constants::icase), TokenType::KwInt},
-        {std::regex("INTO", std::regex_constants::icase), TokenType::KwInto},
-        {std::regex("REAL", std::regex_constants::icase), TokenType::KwReal},
-        {std::regex("SELECT", std::regex_constants::icase),
-         TokenType::KwSelect},
-        {std::regex("TABLE", std::regex_constants::icase), TokenType::KwTable},
-        {std::regex("TEXT", std::regex_constants::icase), TokenType::KwText},
-        {std::regex("VALUES", std::regex_constants::icase),
-         TokenType::KwValues},
-        {std::regex("WHERE", std::regex_constants::icase), TokenType::KwWhere},
-        {std::regex("[a-z][a-z0-9]*", std::regex_constants::icase),
-         TokenType::VarId},
-        {std::regex(">=|<=|!=|=|<|>", std::regex_constants::icase),
-         TokenType::Operation},
-        {std::regex("\\(", std::regex_constants::icase),
-         TokenType::ParenthesisOpening},
-        {std::regex("\\)", std::regex_constants::icase),
-         TokenType::ParenthesisClosing},
-        {std::regex("\\{", std::regex_constants::icase),
-         TokenType::CurlyBracketOpening},
-        {std::regex("\\}", std::regex_constants::icase),
-         TokenType::CurlyBracketClosing},
-        {std::regex(";", std::regex_constants::icase), TokenType::Semicolon},
-        {std::regex(",", std::regex_constants::icase), TokenType::Comma}};
+        {TokenType::VarText,             std::regex("\".*?\"", std::regex_constants::icase)},
+        {TokenType::VarReal,             std::regex("[-+]?0\\.[0-9]+|[1-9][0-9]*\\.[0-9]+", std::regex_constants::icase)},
+        {TokenType::VarInt,              std::regex("[-+]?0|[-+]?[1-9][0-9]*", std::regex_constants::icase)},
+        {TokenType::KwCreate,            std::regex("CREATE", std::regex_constants::icase)},
+        {TokenType::KwInsert,            std::regex("INSERT", std::regex_constants::icase)},
+        {TokenType::KwDelete,            std::regex("DELETE", std::regex_constants::icase)},
+        {TokenType::KwDrop,              std::regex("DROP", std::regex_constants::icase)},
+        {TokenType::KwFrom,              std::regex("FROM", std::regex_constants::icase)},
+        {TokenType::KwInt,               std::regex("INT", std::regex_constants::icase)},
+        {TokenType::KwInto,              std::regex("INTO", std::regex_constants::icase)},
+        {TokenType::KwReal,              std::regex("REAL", std::regex_constants::icase)},
+        {TokenType::KwSelect,            std::regex("SELECT", std::regex_constants::icase)},
+        {TokenType::KwTable,             std::regex("TABLE", std::regex_constants::icase)},
+        {TokenType::KwText,              std::regex("TEXT", std::regex_constants::icase)},
+        {TokenType::KwValues,            std::regex("VALUES", std::regex_constants::icase)},
+        {TokenType::KwWhere,             std::regex("WHERE", std::regex_constants::icase)},
+        {TokenType::VarId,               std::regex("[a-z][a-z0-9]*", std::regex_constants::icase)},
+        {TokenType::Operation,           std::regex(">=|<=|!=|=|<|>", std::regex_constants::icase)},
+        {TokenType::ParenthesisOpening,  std::regex("\\(", std::regex_constants::icase)},
+        {TokenType::ParenthesisClosing,  std::regex("\\)", std::regex_constants::icase)},
+        {TokenType::CurlyBracketOpening, std::regex("\\{", std::regex_constants::icase)},
+        {TokenType::CurlyBracketClosing, std::regex("\\}", std::regex_constants::icase)},
+        {TokenType::Semicolon,           std::regex(";", std::regex_constants::icase)},
+        {TokenType::Comma,               std::regex(",", std::regex_constants::icase)}
+};
+// clang-format on
 }
 
 Lexer::Lexer(std::string_view parse_string_view)

@@ -46,12 +46,12 @@ int main(int argc, char* argv[])
     rdb::parser::Token current_token;
     while (true) {
         current_token = lexer.get();
-        std::cout << '(' << current_token.type_get() << ", "
+        std::cout << '(' << static_cast<int>(current_token.type_get()) << ", "
                   << current_token.lexeme_get() << ')' << '\n';
-        if (current_token.type_get() == rdb::parser::Token::EndOfFile) {
+        if (current_token.type_get() == rdb::parser::TokenType::EndOfFile) {
             break;
         }
-        if (current_token.type_get() == rdb::parser::Token::Unknown) {
+        if (current_token.type_get() == rdb::parser::TokenType::Unknown) {
             std::clog << current_token.lexeme_get() << ": Unknown type\n";
         }
     }

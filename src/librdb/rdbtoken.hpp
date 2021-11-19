@@ -35,7 +35,7 @@ public:
         Unknown
     } TokenType;
 
-    explicit Token(const Token::TokenType& = Unknown, const std::string& = "");
+    explicit Token(const Token::TokenType& = Unknown, std::string_view = "");
     Token::TokenType type_get();
     int type_set(const Token::TokenType&);
     std::string_view lexeme_get();
@@ -45,6 +45,6 @@ public:
 
 private:
     TokenType type;
-    std::string lexeme;
+    std::string_view lexeme;
 };
 }

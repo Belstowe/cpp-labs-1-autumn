@@ -22,21 +22,27 @@ int main(int argc, char* argv[])
     CLI::Option* opt_o = app.add_option<std::string>(
             "-o,--output", output_file, "Output File");
 
-    opt_i->required();
-
     try {
         app.parse(argc, argv);
     } catch (const CLI::ParseError& e) {
         return app.exit(e);
     }
 
-    input_file_stream.open(input_file, std::ifstream::in);
+    std::string sql_inquiry;
+    if (*opt_i) {
+        input_file_stream.open(input_file, std::ifstream::in);
+        sql_inquiry = std::string(
+                std::istreambuf_iterator<char>(input_file_stream), {});
+    } else {
+        std::getline(std::cin, sql_inquiry);
+    }
+
     if (*opt_o) {
         output_file_stream.open(
                 output_file, std::ofstream::out | std::ofstream::app);
     }
 
-    rdb::parser::Lexer lexer(input_file_stream);
+    rdb::parser::Lexer lexer(sql_inquiry);
     rdb::parser::Token current_token;
     while (true) {
         current_token = lexer.get();

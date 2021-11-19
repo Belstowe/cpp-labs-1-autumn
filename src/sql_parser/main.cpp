@@ -38,13 +38,12 @@ int main(int argc, char* argv[])
         std::getline(std::cin, sql_inquiry);
     }
 
-    std::ostream *output_stream;
+    std::ostream* output_stream;
     if (*opt_o) {
         output_file_stream.open(
                 output_file, std::ofstream::out | std::ofstream::app);
         output_stream = &output_file_stream;
-    }
-    else {
+    } else {
         output_stream = &std::cout;
     }
 

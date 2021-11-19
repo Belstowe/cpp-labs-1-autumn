@@ -16,11 +16,11 @@ TEST(LexerTest, HandlesRubbishInput)
     std::istringstream instream("!///\\    *&&^%$# @  <<<>\n'\"ghf");
     Lexer lexer(instream);
     std::vector<Token> token_seq;
-    while (true) {
+
+    do {
         token_seq.push_back(lexer.get());
-        if (token_seq.back().type_get() == Token::EndOfFile)
-            break;
-    }
+    } while (token_seq.back().type_get() != Token::EndOfFile);
+
     std::for_each(token_seq.begin(), token_seq.end() - 1, [](Token& token) {
         EXPECT_EQ(token.type_get(), Token::Unknown);
     });
@@ -46,11 +46,9 @@ TEST(LexerTest, HandlesExprInput)
              Token::ParenthesisClosing,
              Token::EndOfFile});
 
-    while (true) {
+    do {
         token_seq.push_back(lexer.get());
-        if (token_seq.back().type_get() == Token::EndOfFile)
-            break;
-    }
+    } while (token_seq.back().type_get() != Token::EndOfFile);
 
     EXPECT_EQ(token_expected_seq.size(), token_seq.size());
     int count = token_expected_seq.size();
@@ -82,11 +80,9 @@ TEST(LexerTest, HandlesIntInput)
              Token::ParenthesisClosing,
              Token::EndOfFile});
 
-    while (true) {
+    do {
         token_seq.push_back(lexer.get());
-        if (token_seq.back().type_get() == Token::EndOfFile)
-            break;
-    }
+    } while (token_seq.back().type_get() != Token::EndOfFile);
 
     EXPECT_EQ(token_expected_seq.size(), token_seq.size());
     int count = token_expected_seq.size();
@@ -116,20 +112,15 @@ TEST(LexerTest, HandlesStrInput)
              std::string_view("0"),
              std::string_view()});
 
-    while (true) {
+    do {
         token_seq.push_back(lexer.get());
-        if (token_seq.back().type_get() == Token::EndOfFile)
-            break;
-    }
+    } while (token_seq.back().type_get() != Token::EndOfFile);
 
     EXPECT_EQ(token_type_expected_seq.size(), token_seq.size());
     int count = token_type_expected_seq.size();
     for (int i = 0; i < count; i++) {
-        EXPECT_EQ(
-                token_seq[i].type_get(), token_type_expected_seq[i]);
-        EXPECT_EQ(
-                token_seq[i].lexeme_get(),
-                token_lexeme_expected_seq[i]);
+        EXPECT_EQ(token_seq[i].type_get(), token_type_expected_seq[i]);
+        EXPECT_EQ(token_seq[i].lexeme_get(), token_lexeme_expected_seq[i]);
     }
 }
 
@@ -180,20 +171,15 @@ TEST(LexerTest, HandlesIdKwInput)
              std::string_view(";"),
              std::string_view()});
 
-    while (true) {
+    do {
         token_seq.push_back(lexer.get());
-        if (token_seq.back().type_get() == Token::EndOfFile)
-            break;
-    }
+    } while (token_seq.back().type_get() != Token::EndOfFile);
 
     EXPECT_EQ(token_type_expected_seq.size(), token_seq.size());
     int count = token_type_expected_seq.size();
     for (int i = 0; i < count; i++) {
-        ASSERT_EQ(
-                token_seq[i].type_get(), token_type_expected_seq[i]);
-        ASSERT_EQ(
-                token_seq[i].lexeme_get(),
-                token_lexeme_expected_seq[i]);
+        ASSERT_EQ(token_seq[i].type_get(), token_type_expected_seq[i]);
+        ASSERT_EQ(token_seq[i].lexeme_get(), token_lexeme_expected_seq[i]);
     }
 }
 

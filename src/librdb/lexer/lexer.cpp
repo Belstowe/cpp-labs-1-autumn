@@ -42,6 +42,7 @@ const std::vector<TokenRule> TokenRules = {
 };
 // clang-format on
 }
+// namespace
 
 Lexer::Lexer(std::string_view parse_string_view)
     : parse_string{parse_string_view}, string_pos{0}
@@ -50,16 +51,18 @@ Lexer::Lexer(std::string_view parse_string_view)
 
 Token Lexer::peek()
 {
-    if (string_pos == parse_string.length())
+    if (string_pos == parse_string.length()) {
         return Token(TokenType::EndOfFile, "");
+    }
 
     while (std::end(Lexer::skipsym)
            != std::find(
                    std::begin(Lexer::skipsym),
                    std::end(Lexer::skipsym),
                    parse_string.at(string_pos))) {
-        if (++string_pos == parse_string.length())
+        if (++string_pos == parse_string.length()) {
             return Token(TokenType::EndOfFile, "");
+        }
     }
 
     for (auto&& rule : TokenRules) {

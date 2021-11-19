@@ -34,19 +34,25 @@ int main(int argc, char* argv[])
         sql_inquiry = std::string(
                 std::istreambuf_iterator<char>(input_file_stream), {});
     } else {
+        std::cout << "Type an SQL-expression:" << '\n';
         std::getline(std::cin, sql_inquiry);
     }
 
+    std::ostream *output_stream;
     if (*opt_o) {
         output_file_stream.open(
                 output_file, std::ofstream::out | std::ofstream::app);
+        output_stream = &output_file_stream;
+    }
+    else {
+        output_stream = &std::cout;
     }
 
     rdb::parser::Lexer lexer(sql_inquiry);
     rdb::parser::Token current_token;
     while (true) {
         current_token = lexer.get();
-        std::cout << current_token << '\n';
+        *output_stream << current_token << '\n';
         if (current_token.type == rdb::parser::TokenType::EndOfFile) {
             break;
         }
@@ -55,7 +61,9 @@ int main(int argc, char* argv[])
         }
     }
 
-    input_file_stream.close();
+    if (input_file_stream.is_open()) {
+        input_file_stream.close();
+    }
     if (output_file_stream.is_open()) {
         output_file_stream.close();
     }

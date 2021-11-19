@@ -15,7 +15,7 @@ project(
 
 find_program(CLANG_TIDY_EXE NAMES "clang-tidy" "clang-tidy-*")
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 
 include_directories(src)
 

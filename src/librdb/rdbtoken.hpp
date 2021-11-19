@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string_view>
 
 namespace rdb::parser {
@@ -38,3 +39,5 @@ struct Token {
     Token(TokenType type = TokenType::Unknown, std::string_view lexeme = "");
 };
 }
+
+std::ostream& operator<<(std::ostream& os, const rdb::parser::Token& token);

@@ -46,8 +46,7 @@ int main(int argc, char* argv[])
     rdb::parser::Token current_token;
     while (true) {
         current_token = lexer.get();
-        std::cout << '(' << static_cast<int>(current_token.type) << ", "
-                  << current_token.lexeme << ')' << '\n';
+        std::cout << current_token << '\n';
         if (current_token.type == rdb::parser::TokenType::EndOfFile) {
             break;
         }

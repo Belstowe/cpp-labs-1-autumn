@@ -31,8 +31,8 @@ TEST(LexerTest, HandlesExprInput)
 {
     std::istringstream instream("((({<= <= >})))");
     Lexer lexer(instream);
-    std::queue<Token> token_seq;
-    std::queue<Token::TokenType> token_expected_seq(
+    std::vector<Token> token_seq;
+    std::vector<Token::TokenType> token_expected_seq(
             {Token::ParenthesisOpening,
              Token::ParenthesisOpening,
              Token::ParenthesisOpening,
@@ -47,7 +47,7 @@ TEST(LexerTest, HandlesExprInput)
              Token::EndOfFile});
 
     while (true) {
-        token_seq.push(lexer.get());
+        token_seq.push_back(lexer.get());
         if (token_seq.back().type_get() == Token::EndOfFile)
             break;
     }
@@ -55,9 +55,7 @@ TEST(LexerTest, HandlesExprInput)
     EXPECT_EQ(token_expected_seq.size(), token_seq.size());
     int count = token_expected_seq.size();
     for (int i = 0; i < count; i++) {
-        EXPECT_EQ(token_seq.front().type_get(), token_expected_seq.front());
-        token_seq.pop();
-        token_expected_seq.pop();
+        EXPECT_EQ(token_seq[i].type_get(), token_expected_seq[i]);
     }
 }
 
@@ -65,8 +63,8 @@ TEST(LexerTest, HandlesIntInput)
 {
     std::istringstream instream("(1.345 <= 4 )(4>.2)( 0< 66 )");
     Lexer lexer(instream);
-    std::queue<Token> token_seq;
-    std::queue<Token::TokenType> token_expected_seq(
+    std::vector<Token> token_seq;
+    std::vector<Token::TokenType> token_expected_seq(
             {Token::ParenthesisOpening,
              Token::VarReal,
              Token::Operation,
@@ -85,7 +83,7 @@ TEST(LexerTest, HandlesIntInput)
              Token::EndOfFile});
 
     while (true) {
-        token_seq.push(lexer.get());
+        token_seq.push_back(lexer.get());
         if (token_seq.back().type_get() == Token::EndOfFile)
             break;
     }
@@ -93,9 +91,7 @@ TEST(LexerTest, HandlesIntInput)
     EXPECT_EQ(token_expected_seq.size(), token_seq.size());
     int count = token_expected_seq.size();
     for (int i = 0; i < count; i++) {
-        EXPECT_EQ(token_seq.front().type_get(), token_expected_seq.front());
-        token_seq.pop();
-        token_expected_seq.pop();
+        EXPECT_EQ(token_seq[i].type_get(), token_expected_seq[i]);
     }
 }
 
@@ -104,15 +100,15 @@ TEST(LexerTest, HandlesStrInput)
     std::istringstream instream(
             "(\"(lorem ipsum )\")\"66 domina\\\"   \n 0\"0");
     Lexer lexer(instream);
-    std::queue<Token> token_seq;
-    std::queue<Token::TokenType> token_type_expected_seq(
+    std::vector<Token> token_seq;
+    std::vector<Token::TokenType> token_type_expected_seq(
             {Token::ParenthesisOpening,
              Token::VarText,
              Token::ParenthesisClosing,
              Token::VarText,
              Token::VarInt,
              Token::EndOfFile});
-    std::queue<std::string_view> token_lexeme_expected_seq(
+    std::vector<std::string_view> token_lexeme_expected_seq(
             {std::string_view("("),
              std::string_view("(lorem ipsum )"),
              std::string_view(")"),
@@ -121,7 +117,7 @@ TEST(LexerTest, HandlesStrInput)
              std::string_view()});
 
     while (true) {
-        token_seq.push(lexer.get());
+        token_seq.push_back(lexer.get());
         if (token_seq.back().type_get() == Token::EndOfFile)
             break;
     }
@@ -130,13 +126,10 @@ TEST(LexerTest, HandlesStrInput)
     int count = token_type_expected_seq.size();
     for (int i = 0; i < count; i++) {
         EXPECT_EQ(
-                token_seq.front().type_get(), token_type_expected_seq.front());
+                token_seq[i].type_get(), token_type_expected_seq[i]);
         EXPECT_EQ(
-                token_seq.front().lexeme_get(),
-                token_lexeme_expected_seq.front());
-        token_seq.pop();
-        token_type_expected_seq.pop();
-        token_lexeme_expected_seq.pop();
+                token_seq[i].lexeme_get(),
+                token_lexeme_expected_seq[i]);
     }
 }
 
@@ -146,8 +139,8 @@ TEST(LexerTest, HandlesIdKwInput)
             "TEXT tXt = (\"{Never gonna give you up! Never gonna let you "
             "down!}\");\nint i=0;\nReAl PI =3.1415;");
     Lexer lexer(instream);
-    std::queue<Token> token_seq;
-    std::queue<Token::TokenType> token_type_expected_seq(
+    std::vector<Token> token_seq;
+    std::vector<Token::TokenType> token_type_expected_seq(
             {Token::KwText,
              Token::VarId,
              Token::Operation,
@@ -166,7 +159,7 @@ TEST(LexerTest, HandlesIdKwInput)
              Token::VarReal,
              Token::Semicolon,
              Token::EndOfFile});
-    std::queue<std::string_view> token_lexeme_expected_seq(
+    std::vector<std::string_view> token_lexeme_expected_seq(
             {std::string_view("text"),
              std::string_view("txt"),
              std::string_view("="),
@@ -188,7 +181,7 @@ TEST(LexerTest, HandlesIdKwInput)
              std::string_view()});
 
     while (true) {
-        token_seq.push(lexer.get());
+        token_seq.push_back(lexer.get());
         if (token_seq.back().type_get() == Token::EndOfFile)
             break;
     }
@@ -197,13 +190,10 @@ TEST(LexerTest, HandlesIdKwInput)
     int count = token_type_expected_seq.size();
     for (int i = 0; i < count; i++) {
         ASSERT_EQ(
-                token_seq.front().type_get(), token_type_expected_seq.front());
+                token_seq[i].type_get(), token_type_expected_seq[i]);
         ASSERT_EQ(
-                token_seq.front().lexeme_get(),
-                token_lexeme_expected_seq.front());
-        token_seq.pop();
-        token_type_expected_seq.pop();
-        token_lexeme_expected_seq.pop();
+                token_seq[i].lexeme_get(),
+                token_lexeme_expected_seq[i]);
     }
 }
 

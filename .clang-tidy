@@ -11,7 +11,9 @@ Checks: '
     -cppcoreguidelines-owning-memory,
     -google-runtime-references,
     -cert-err58-cpp,
-    -bugprone-exception-escape
+    -bugprone-exception-escape,
+    -google-readability-namespace-comments,
+    -altera-struct-pack-align
     '
 WarningsAsErrors: ''
 HeaderFilterRegex: ''

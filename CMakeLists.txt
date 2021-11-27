@@ -13,6 +13,8 @@ project(
 	VERSION 0.1
 	LANGUAGES CXX)
 
+option(GTEST_BUILD "Build GoogleTest" ON)
+
 find_program(CLANG_TIDY_EXE NAMES "clang-tidy" "clang-tidy-*")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
@@ -20,5 +22,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 include_directories(src)
 
 add_subdirectory(src)
-add_subdirectory(tests)
+if (GTEST_BUILD)
+	add_subdirectory(tests)
+endif()
 add_subdirectory(extras)

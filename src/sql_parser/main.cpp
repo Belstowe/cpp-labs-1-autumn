@@ -22,35 +22,45 @@ int main(int argc, char* argv[])
     CLI::Option* opt_o = app.add_option<std::string>(
             "-o,--output", output_file, "Output File");
 
-    opt_i->required();
-
     try {
         app.parse(argc, argv);
     } catch (const CLI::ParseError& e) {
         return app.exit(e);
     }
 
-    input_file_stream.open(input_file, std::ifstream::in);
+    std::string sql_inquiry;
+    if (*opt_i) {
+        input_file_stream.open(input_file, std::ifstream::in);
+        sql_inquiry = std::string(
+                std::istreambuf_iterator<char>(input_file_stream), {});
+    } else {
+        std::cout << "Type an SQL-expression:" << '\n';
+        std::getline(std::cin, sql_inquiry);
+    }
+
+    std::ostream* output_stream = &std::cout;
     if (*opt_o) {
         output_file_stream.open(
                 output_file, std::ofstream::out | std::ofstream::app);
+        output_stream = &output_file_stream;
     }
 
-    rdb::parser::Lexer lexer(input_file_stream);
+    rdb::parser::Lexer lexer(sql_inquiry);
     rdb::parser::Token current_token;
     while (true) {
         current_token = lexer.get();
-        std::cout << '(' << current_token.type_get() << ", "
-                  << current_token.lexeme_get() << ')' << '\n';
-        if (current_token.type_get() == rdb::parser::Token::EndOfFile) {
+        *output_stream << current_token << '\n';
+        if (current_token.type == rdb::parser::TokenType::EndOfFile) {
             break;
         }
-        if (current_token.type_get() == rdb::parser::Token::Unknown) {
-            std::clog << current_token.lexeme_get() << ": Unknown type\n";
+        if (current_token.type == rdb::parser::TokenType::Unknown) {
+            std::clog << current_token.lexeme << ": Unknown type\n";
         }
     }
 
-    input_file_stream.close();
+    if (input_file_stream.is_open()) {
+        input_file_stream.close();
+    }
     if (output_file_stream.is_open()) {
         output_file_stream.close();
     }

@@ -41,7 +41,7 @@ const std::vector<TokenRule> TokenRules = {
         {TokenType::Comma,               std::regex(",", std::regex_constants::icase)}
 };
 // clang-format on
-}  // namespace
+} // namespace
 
 Lexer::Lexer(std::string_view parse_string_view)
     : parse_string{parse_string_view}, string_pos{0}

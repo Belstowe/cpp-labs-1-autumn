@@ -36,7 +36,12 @@ enum class TokenType {
 struct Token {
     TokenType type;
     std::string_view lexeme;
-    Token(TokenType type = TokenType::Unknown, std::string_view lexeme = "");
+    size_t parsed_col;
+    size_t parsed_row;
+    Token(TokenType type = TokenType::Unknown,
+          std::string_view lexeme = "",
+          size_t parsed_col = 0,
+          size_t parsed_row = 0);
 };
 }
 

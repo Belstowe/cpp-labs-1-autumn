@@ -52,7 +52,7 @@ Lexer::Lexer(std::string_view parse_string_view)
 Token Lexer::peek()
 {
     if (string_pos == parse_string.length()) {
-        return Token(TokenType::EndOfFile, "");
+        return Token(TokenType::EndOfFile, "", ++col, row);
     }
 
     while (std::end(Lexer::skipsym)
@@ -66,7 +66,7 @@ Token Lexer::peek()
             row++;
         }
         if (++string_pos == parse_string.length()) {
-            return Token(TokenType::EndOfFile, "", row, col);
+            return Token(TokenType::EndOfFile, "", ++col, row);
         }
     }
 

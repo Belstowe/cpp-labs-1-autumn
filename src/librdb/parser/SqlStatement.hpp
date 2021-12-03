@@ -1,21 +1,22 @@
 #pragma once
 
+#include "librdb/rdbtoken.hpp"
 #include <initializer_list>
 #include <string>
 #include <variant>
 #include <vector>
 
 namespace rdb::parser {
-    using Value = std::variant<int, double, std::string>;
+    using Value = std::variant<long, double, std::string>;
 
     struct Operand {
-        bool is_var;
+        bool is_id;
         Value val;
     };
 
     typedef struct _column_def {
         std::string column_name;
-        std::string type_name;
+        TokenType type_name;
     } ColumnDef;
 
     typedef struct _expression {

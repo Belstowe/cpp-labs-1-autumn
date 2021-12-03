@@ -35,7 +35,7 @@ namespace rdb::parser {
 
         private:
             std::string _table_name;
-            std::vector<ColumnDef> _column_def;
+            std::vector<ColumnDef> _column_def_seq;
     };
 
     class InsertStatement : public SqlStatement {
@@ -44,13 +44,13 @@ namespace rdb::parser {
 
         private:
             std::string _table_name;
-            std::vector<std::string> _column_name;
-            std::vector<Value> _value;
+            std::vector<std::string> _column_name_seq;
+            std::vector<Value> _value_seq;
     };
 
     class SelectStatement : public SqlStatement {
         public:
-            explicit SelectStatement(std::string, std::string, Expression = Expression{0, "None", 0} );
+            explicit SelectStatement(std::string, std::string, Expression = Expression{0, "N", 0} );
         
         private:
             std::string _table_name;
@@ -61,7 +61,7 @@ namespace rdb::parser {
 
     class DeleteFromStatement : public SqlStatement {
         public:
-            explicit DeleteFromStatement(std::string, Expression = Expression{0, "None", 0} );
+            explicit DeleteFromStatement(std::string, Expression = Expression{0, "N", 0} );
 
         private:
             std::string _table_name;

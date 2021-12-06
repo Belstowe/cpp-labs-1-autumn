@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SqlStatement.hpp"
+#include "Error.hpp"
 #include "librdb/lexer/lexer.hpp"
 #include "librdb/rdbtoken.hpp"
 #include <memory>
@@ -13,34 +14,14 @@ namespace rdb::parser {
         std::vector<std::unique_ptr<SqlStatement>> _sql_statements;
     };
 
-    enum class ErrorType {
-        SyntaxError,
-        VarSyntaxError,
-        TypeSyntaxError,
-        IncorrectVarType,
-        NotStatement,
-        VarOutOfRange,
-        UnknownType,
-        UnexpectedEOF,
-        Undefined
-    };
-
-    class Error {
-        public:
-            Error(Token token, ErrorType type, TokenType expected = TokenType::Unknown);
-
-        private:
-            Token _token;
-            ErrorType _type;
-            TokenType _expected;
-
-        friend std::ostream& operator<<(std::ostream& os, const rdb::parser::Error& error);
-    };
+    std::ostream& operator<<(std::ostream& os, const rdb::parser::SqlScript& sql);
 
     struct ParseResult {
         SqlScript _sql_script;
         std::vector<Error> _errors;
     };
+
+    std::ostream& operator<<(std::ostream& os, const rdb::parser::ParseResult& parse_result);
 
     class Parser {
         public:

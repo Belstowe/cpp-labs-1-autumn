@@ -2,23 +2,28 @@
 
 using namespace rdb::parser;
 
+std::ostream& rdb::parser::operator<<(std::ostream& os, const SqlStatement& statement) {
+    statement.print(os);
+    return os;
+}
+
 CreateTableStatement::CreateTableStatement(std::string table_name, std::vector<ColumnDef> column_def_seq)
     : _table_name{table_name}, _column_def_seq{column_def_seq}
 {
 }
 
-std::ostream& rdb::parser::operator<<(std::ostream& os, const rdb::parser::CreateTableStatement& statement) {
-    os << "{ \"table_name\": " << statement._table_name << ",\n";
+void CreateTableStatement::print(std::ostream& os) const {
+    os << "{ \n";
+    os << "\"table_name\": " << _table_name << " ,\n";
     os << "\"column_def_seq\": [\n";
-    for (auto &&column_def : statement._column_def_seq) {
+    for (auto&& column_def : _column_def_seq) {
         os << "\t{ ";
         os << "\"column_name\": " << column_def.column_name << ", ";
-        os << "\"type\": " << static_cast<int>(column_def.type_name) << " ";
+        os << "\"type\": " << column_def.type_name << " ";
         os << "} ";
         os << "\n";
     }
     os << "] }";
-    return os;
 }
 
 InsertStatement::InsertStatement(std::string table_name, std::vector<std::string> column_name_seq, std::vector<Value> value_seq)

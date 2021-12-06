@@ -50,6 +50,7 @@ int main(int argc, char* argv[])
     rdb::parser::Parser parser(lexer);
     rdb::parser::ParseResult sql;
     parser.parse_sql(sql);
+    *output_stream << sql;
 
     if (input_file_stream.is_open()) {
         input_file_stream.close();

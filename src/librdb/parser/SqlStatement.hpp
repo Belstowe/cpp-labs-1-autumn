@@ -28,7 +28,10 @@ namespace rdb::parser {
     class SqlStatement {
         public:
             virtual ~SqlStatement() = default;
+            virtual void print(std::ostream& os) const = 0;
     };
+
+    std::ostream& operator<<(std::ostream& os, const SqlStatement& statement);
 
     class CreateTableStatement : public SqlStatement {
         private:
@@ -38,8 +41,7 @@ namespace rdb::parser {
         public:
             ~CreateTableStatement() = default;
             CreateTableStatement(std::string, std::vector<ColumnDef>);
-
-            friend std::ostream& operator<<(std::ostream& os, const rdb::parser::CreateTableStatement& statement);
+            void print(std::ostream& os) const;
     };
 
     class InsertStatement : public SqlStatement {

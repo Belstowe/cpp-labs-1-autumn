@@ -25,6 +25,8 @@ namespace rdb::parser {
         Operand roperand;
     } Expression;
 
+    std::ostream& operator<<(std::ostream& os, const Expression& expression);
+
     class SqlStatement {
         public:
             virtual ~SqlStatement() = default;
@@ -53,18 +55,20 @@ namespace rdb::parser {
         public:
             ~InsertStatement() = default;
             InsertStatement(std::string, std::vector<std::string>, std::vector<Value>);
+            void print(std::ostream& os) const;
     };
 
     class SelectStatement : public SqlStatement {
         private:
             std::string _table_name;
-            std::string _column_name;
+            std::vector<std::string> _column_name_seq;
             bool _has_expression_cond;
             Expression _expression;
 
         public:
             ~SelectStatement() = default;
-            SelectStatement(std::string, std::string, Expression = Expression{0, "N", 0} );
+            SelectStatement(std::string, std::vector<std::string>, Expression = Expression{0, "N", 0} );
+            void print(std::ostream& os) const;
     };
 
     class DeleteFromStatement : public SqlStatement {
@@ -76,6 +80,7 @@ namespace rdb::parser {
         public:
             ~DeleteFromStatement() = default;
             DeleteFromStatement(std::string, Expression = Expression{0, "N", 0} );
+            void print(std::ostream& os) const;
     };
 
     class DropTableStatement : public SqlStatement {
@@ -85,5 +90,6 @@ namespace rdb::parser {
         public:
             ~DropTableStatement() = default;
             DropTableStatement(std::string);
+            void print(std::ostream& os) const;
     };
 } // namespace rdb::parser

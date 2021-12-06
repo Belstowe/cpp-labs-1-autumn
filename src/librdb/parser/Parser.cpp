@@ -127,14 +127,17 @@ int Parser::parse_column_def(std::vector<ColumnDef> &column_def_seq, bool& catch
                 }
                 else {
                     _sql._errors.push_back(Error(token_seq[1], ErrorType::VarSyntaxError));
+                    catched_error = true;
                 }
             }
             else {
                 _sql._errors.push_back(Error(token_seq[0], ErrorType::SyntaxError, TokenType::VarId));
+                catched_error = true;
             }
         }
         else {
             _sql._errors.push_back(Error(token, ErrorType::WrongColumnDefinition));
+            catched_error = true;
         }
 
         token_seq.clear();

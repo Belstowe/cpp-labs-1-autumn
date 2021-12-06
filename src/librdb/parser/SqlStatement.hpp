@@ -9,10 +9,14 @@
 namespace rdb::parser {
     using Value = std::variant<long, double, std::string>;
 
+    std::ostream& operator<<(std::ostream& os, const Value& value);
+
     struct Operand {
         bool is_id;
         Value val;
     };
+
+    std::ostream& operator<<(std::ostream& os, const Operand& operand);
 
     typedef struct _column_def {
         std::string column_name;

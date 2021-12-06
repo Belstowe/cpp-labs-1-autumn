@@ -2,6 +2,21 @@
 
 using namespace rdb::parser;
 
+std::ostream& rdb::parser::operator<<(std::ostream& os, const Value& value) {
+    std::visit([&os](const auto& v) { os << v; }, value);
+    return os;
+}
+
+std::ostream& rdb::parser::operator<<(std::ostream& os, const Operand& operand) {
+    os << operand.val;
+    return os;
+}
+
+std::ostream& rdb::parser::operator<<(std::ostream& os, const Expression& expression) {
+    os << expression.loperand << " " << expression.operation << " " << expression.roperand;
+    return os;
+}
+
 std::ostream& rdb::parser::operator<<(std::ostream& os, const SqlStatement& statement) {
     statement.print(os);
     return os;
@@ -38,8 +53,7 @@ void InsertStatement::print(std::ostream& os) const {
     for (size_t index = 0; index < _column_name_seq.size(); index++) {
         os << "\t{ ";
         os << "\"column_name\": " << _column_name_seq.at(index) << ", ";
-        os << "\"value\": ";
-        std::visit([&os](const auto& v) { os << v; }, _value_seq.at(index));
+        os << "\"value\": " << _value_seq.at(index) << "\n";
         os << " } ";
         os << "\n";
     }

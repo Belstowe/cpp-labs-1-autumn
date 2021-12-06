@@ -44,14 +44,14 @@ const std::vector<TokenRule> TokenRules = {
 } // namespace
 
 Lexer::Lexer(std::string_view parse_string_view)
-    : parse_string{parse_string_view}, string_pos{0}, col{0}, row{1}
+    : parse_string{parse_string_view}, string_pos{0}, col{1}, row{1}
 {
 }
 
 Token Lexer::peek()
 {
     if (string_pos == parse_string.length()) {
-        return Token(TokenType::EndOfFile, "", ++col, row);
+        return Token(TokenType::EndOfFile, "", col, row);
     }
 
     while (std::end(Lexer::skipsym)
@@ -61,11 +61,11 @@ Token Lexer::peek()
                    parse_string.at(string_pos))) {
         col++;
         if (parse_string.at(string_pos) == '\n') {
-            col = 0;
+            col = 1;
             row++;
         }
         if (++string_pos == parse_string.length()) {
-            return Token(TokenType::EndOfFile, "", ++col, row);
+            return Token(TokenType::EndOfFile, "", col, row);
         }
     }
 
@@ -81,9 +81,8 @@ Token Lexer::peek()
                     std::string_view(
                             parse_string.data() + string_pos,
                             match.begin()->length()),
-                    col + 1,
+                    col,
                     row);
-            col += match.begin()->length();
             return token_to_return;
         }
     }
@@ -91,13 +90,20 @@ Token Lexer::peek()
     return Token(
             TokenType::Unknown,
             std::string_view(parse_string.data() + string_pos++, 1),
-            ++col,
+            col,
             row);
 }
 
 Token Lexer::get()
 {
     auto res_token = peek();
+    for (size_t index = 0; index < res_token.lexeme.length(); index++) {
+        col++;
+        if (res_token.lexeme.at(index) == '\n') {
+            col = 1;
+            row++;
+        }
+    }
     string_pos += res_token.lexeme.length();
     return res_token;
 }

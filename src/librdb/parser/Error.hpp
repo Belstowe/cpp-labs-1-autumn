@@ -8,7 +8,7 @@ namespace rdb::parser {
         VarSyntaxError,
         TypeSyntaxError,
         IncorrectVarType,
-        WrongColumnDefinition,
+        WrongListDefinition,
         NotStatement,
         VarOutOfRange,
         UnknownType,

@@ -14,6 +14,8 @@ namespace rdb::parser {
     struct Operand {
         bool is_id;
         Value val;
+        Operand(Value val, bool is_id = false);
+        Operand(long val);
     };
 
     std::ostream& operator<<(std::ostream& os, const Operand& operand);

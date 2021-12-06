@@ -14,7 +14,7 @@ std::ostream& rdb::parser::operator<<(std::ostream& os, const Error& error) {
     os << "! " << error._token << ":\n";
     os << "  Error::" << error._type;
     if (error._expected != TokenType::Unknown) {
-        os << " (expected " << error._expected << " )";
+        os << " (expected " << error._expected << ")";
     }
     return os;
 }
@@ -26,7 +26,7 @@ std::ostream& rdb::parser::operator<<(std::ostream& os, const ErrorType& error_t
         case ErrorType::VarSyntaxError: os << "VarSyntaxError"; break;
         case ErrorType::TypeSyntaxError: os << "TypeSyntaxError"; break;
         case ErrorType::IncorrectVarType: os << "IncorrectVarType"; break;
-        case ErrorType::WrongColumnDefinition: os << "WrongColumnDefinition"; break;
+        case ErrorType::WrongListDefinition: os << "WrongListDefinition"; break;
         case ErrorType::NotStatement: os << "NotStatement"; break;
         case ErrorType::VarOutOfRange: os << "VarOutOfRange"; break;
         case ErrorType::UnknownType: os << "UnknownType"; break;

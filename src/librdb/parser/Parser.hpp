@@ -33,13 +33,14 @@ namespace rdb::parser {
             ParseResult _sql;
             void parse_token(const TokenType expected_token, std::string *value, bool *catched_error, const bool is_required = true, TokenType *got_token = NULL);
             template<typename T> void convert_lexeme_to_var(Token &token, Value &value, const TokenType &token_type, bool *catched_error);
-            void parse_value(Value &value, TokenType &token_type, bool *catched_error);
+            void parse_value(Value& value, Token& token, bool *catched_error);
+            void parse_operand(Operand &operand, TokenType &token_type, bool *catched_error);
             void parse_var_type(TokenType &token_type, bool *catched_error);
             int parse_column_def(std::vector<ColumnDef> &column_def_seq, bool& catched_error);
             void parse_statement_create();
-            void parse_statement_delete();
             void parse_statement_insert();
             void parse_statement_select();
+            void parse_statement_delete();
             void parse_statement_drop();
     };
 } // namespace rdb::parser

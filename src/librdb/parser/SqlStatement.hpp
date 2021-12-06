@@ -31,50 +31,57 @@ namespace rdb::parser {
     };
 
     class CreateTableStatement : public SqlStatement {
-        public:
-            explicit CreateTableStatement(std::string, std::vector<ColumnDef>);
-
         private:
             std::string _table_name;
             std::vector<ColumnDef> _column_def_seq;
+
+        public:
+            ~CreateTableStatement() = default;
+            CreateTableStatement(std::string, std::vector<ColumnDef>);
+
+            friend std::ostream& operator<<(std::ostream& os, const rdb::parser::CreateTableStatement& statement);
     };
 
     class InsertStatement : public SqlStatement {
-        public:
-            explicit InsertStatement(std::string, std::vector<std::string>, std::vector<Value>);
-
         private:
             std::string _table_name;
             std::vector<std::string> _column_name_seq;
             std::vector<Value> _value_seq;
+
+        public:
+            ~InsertStatement() = default;
+            InsertStatement(std::string, std::vector<std::string>, std::vector<Value>);
     };
 
     class SelectStatement : public SqlStatement {
-        public:
-            explicit SelectStatement(std::string, std::string, Expression = Expression{0, "N", 0} );
-        
         private:
             std::string _table_name;
             std::string _column_name;
             bool _has_expression_cond;
             Expression _expression;
+
+        public:
+            ~SelectStatement() = default;
+            SelectStatement(std::string, std::string, Expression = Expression{0, "N", 0} );
     };
 
     class DeleteFromStatement : public SqlStatement {
-        public:
-            explicit DeleteFromStatement(std::string, Expression = Expression{0, "N", 0} );
-
         private:
             std::string _table_name;
             bool _has_expression_cond;
             Expression _expression;
+
+        public:
+            ~DeleteFromStatement() = default;
+            DeleteFromStatement(std::string, Expression = Expression{0, "N", 0} );
     };
 
     class DropTableStatement : public SqlStatement {
-        public:
-            explicit DropTableStatement(std::string);
-        
         private:
             std::string _table_name;
+
+        public:
+            ~DropTableStatement() = default;
+            DropTableStatement(std::string);
     };
 } // namespace rdb::parser

@@ -29,47 +29,38 @@ void Parser::parse_token(const TokenType expected_token, std::string *value, boo
     }
 }
 
+template<typename T>
+void Parser::convert_lexeme_to_var(Token &token, Value &value, const TokenType &token_type, bool *catched_error) {
+    T result{};
+    auto [ptr, ec] { std::from_chars(token.lexeme.data(), token.lexeme.data() + token.lexeme.size(), result) };
+    if (ec == std::errc()) {
+        value = result;
+    }
+    else if (ec == std::errc::result_out_of_range) {
+        _sql._errors.push_back(Error(token, ErrorType::VarOutOfRange, token_type));
+         if (catched_error != NULL) {
+            *catched_error = true;
+        }
+    }
+    else {
+        _sql._errors.push_back(Error(token, ErrorType::IncorrectVarType, token_type));
+        if (catched_error != NULL) {
+             *catched_error = true;
+        }
+    }
+}
+
 void Parser::parse_value(Value &value, TokenType &token_type, bool *catched_error) {
     Token token = _lexer.get();
     token_type = token.type;
 
     switch (token_type) {
         case TokenType::VarInt:
-            long result;
-            auto [ptr, ec] { std::from_chars(token.lexeme.data(), token.lexeme.data() + token.lexeme.size(), result) };
-            switch (ec) {
-                case std::errc():
-                    value = result;
-                case std::errc::result_out_of_range:
-                    _sql._errors.push_back(Error(token, ErrorType::VarOutOfRange, TokenType::VarInt));
-                    if (catched_error != NULL) {
-                        *catched_error = true;
-                    }
-                default:
-                    _sql._errors.push_back(Error(token, ErrorType::IncorrectVarType, TokenType::VarInt));
-                    if (catched_error != NULL) {
-                        *catched_error = true;
-                    }
-            }
+            convert_lexeme_to_var<long>(token, value, token_type, catched_error);
             break;
 
         case TokenType::VarReal:
-            double result;
-            auto [ptr, ec] { std::from_chars(token.lexeme.data(), token.lexeme.data() + token.lexeme.size(), result) };
-            switch (ec) {
-                case std::errc():
-                    value = result;
-                case std::errc::result_out_of_range:
-                    _sql._errors.push_back(Error(token, ErrorType::VarOutOfRange, TokenType::VarReal));
-                    if (catched_error != NULL) {
-                        *catched_error = true;
-                    }
-                default:
-                    _sql._errors.push_back(Error(token, ErrorType::IncorrectVarType, TokenType::VarReal));
-                    if (catched_error != NULL) {
-                        *catched_error = true;
-                    }
-            }
+            convert_lexeme_to_var<double>(token, value, token_type, catched_error);
             break;
 
         case TokenType::VarText:
@@ -86,7 +77,8 @@ void Parser::parse_value(Value &value, TokenType &token_type, bool *catched_erro
 
 void Parser::parse_var_type(TokenType &token_type, bool *catched_error) {
     Token token = _lexer.get();
-    if ((token.type != TokenType::KwInt) || (token.type != TokenType::KwReal) || (token.type != TokenType::KwText)) {
+    token_type = token.type;
+    if ((token_type != TokenType::KwInt) || (token_type != TokenType::KwReal) || (token_type != TokenType::KwText)) {
         _sql._errors.push_back(Error(token, ErrorType::TypeSyntaxError));
         if (catched_error != NULL) {
             *catched_error = true;
@@ -122,6 +114,8 @@ int Parser::parse_column_def(std::vector<ColumnDef> &column_def_seq, bool& catch
                 parse_token(TokenType::Comma, NULL, NULL, false, &token_type);
         }
     } while ((token_type != TokenType::ParenthesisClosing) || (token_type != TokenType::EndOfFile));
+
+    return s;
 }
 
 void Parser::parse_statement_create() {
@@ -134,25 +128,30 @@ void Parser::parse_statement_create() {
     parse_token(TokenType::VarId, &table_name, &catched_error, true);
     parse_column_def(column_def_seq, catched_error);
     parse_token(TokenType::Semicolon, NULL, &catched_error, true);
+
+    if (!catched_error) {
+        std::unique_ptr<CreateTableStatement> create_table_statement = std::make_unique<CreateTableStatement>(table_name, column_def_seq);
+        _sql._sql_script._sql_statements.push_back(std::unique_ptr<SqlStatement>(create_table_statement.release()));
+    }
 }
 
 void Parser::parse_statement_delete() {
-    bool catched_error = false;
+    // TBD
 }
 
 void Parser::parse_statement_insert() {
-    bool catched_error = false;
+    // TBD
 }
 
 void Parser::parse_statement_select() {
-    bool catched_error = false;
+    // TBD
 }
 
 void Parser::parse_statement_drop() {
-    bool catched_error = false;
+    // TBD
 }
 
-struct ParseResult Parser::parse_sql() {
+void Parser::parse_sql(ParseResult& sql) {
     Token token;
 
     do {
@@ -184,4 +183,9 @@ struct ParseResult Parser::parse_sql() {
                 _sql._errors.push_back(Error(token, ErrorType::NotStatement));
         }
     } while (token.type != TokenType::EndOfFile);
+
+    std::move(_sql._sql_script._sql_statements.begin(), _sql._sql_script._sql_statements.end(), std::back_inserter(sql._sql_script._sql_statements));
+    _sql._sql_script._sql_statements.clear();
+    sql._errors = _sql._errors;
+    _sql._errors.clear();
 }

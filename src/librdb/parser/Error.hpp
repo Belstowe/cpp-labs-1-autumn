@@ -19,6 +19,8 @@ namespace rdb::parser {
     class Error {
         public:
             Error(Token token, ErrorType type, TokenType expected = TokenType::Unknown);
+            ErrorType type() const;
+            TokenType token_type() const;
 
         private:
             Token _token;

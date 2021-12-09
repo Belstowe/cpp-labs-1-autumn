@@ -32,17 +32,17 @@ namespace rdb::parser {
             Lexer& _lexer;
             ParseResult _sql;
 
-            void parse_token(const TokenType expected_token, std::string *value, bool& catched_error);
-            template<typename T> void convert_lexeme_to_var(Token &token, Value &value, const TokenType &token_type, bool& catched_error);
-            void parse_operand(Operand &operand, bool& catched_error);
-            void parse_column_def(std::vector<ColumnDef>& column_def_seq, bool& catched_error);
-            void parse_column_list(std::vector<std::string>& column_name_seq, bool& catched_error);
+            void parse_token(const TokenType expected_token, std::string *value);
+            template<typename T> void convert_lexeme_to_var(Token& token, Value& value, const TokenType& token_type);
+            void parse_operand(Operand& operand);
+            void parse_column_def(std::vector<ColumnDef>& column_def_seq);
+            void parse_column_list(std::vector<std::string>& column_name_seq);
 
-            void parse_argument_table(std::string& table_name, bool& catched_error);
-            void parse_argument_into(std::string& table_name, std::vector<std::string>& column_name_seq, bool& catched_error);
-            void parse_argument_values(std::vector<Value>& value_seq, bool& catched_error);
-            void parse_argument_where(Expression& expression, bool& catched_error);
-            void parse_argument_from(std::string& table_name, Expression& expression, bool& catched_error);
+            void parse_argument_table(std::string& table_name);
+            void parse_argument_into(std::string& table_name, std::vector<std::string>& column_name_seq);
+            void parse_argument_values(std::vector<Value>& value_seq);
+            void parse_argument_where(Expression& expression);
+            void parse_argument_from(std::string& table_name, Expression& expression);
             
             void parse_statement_create();
             void parse_statement_insert();

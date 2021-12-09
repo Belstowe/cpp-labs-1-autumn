@@ -10,6 +10,14 @@ Error::Error(Token token, ErrorType type, TokenType expected)
 {
 }
 
+ErrorType Error::type() const {
+    return _type;
+}
+
+TokenType Error::token_type() const {
+    return _token.type;
+}
+
 std::ostream& rdb::parser::operator<<(std::ostream& os, const Error& error) {
     os << "! " << error._token << ":\n";
     os << "  Error::" << error._type;

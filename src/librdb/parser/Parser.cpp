@@ -24,14 +24,13 @@ Parser::Parser(Lexer& lexer)
 {
 }
 
-void Parser::parse_token(const TokenType expected_token, std::string *value, bool& catched_error) {
+void Parser::parse_token(const TokenType expected_token, std::string *value) {
     Token token = _lexer.get();
     if (token.type != expected_token) {
         if (token.type == TokenType::EndOfFile) {
             throw Error(token, ErrorType::UnexpectedEOF, expected_token);
         }
-        _sql._errors.push_back(Error(token, ErrorType::SyntaxError, expected_token));
-        catched_error = true;
+        throw(Error(token, ErrorType::SyntaxError, expected_token));
     }
     else if (value != NULL) {
         *value = token.lexeme;
@@ -39,33 +38,31 @@ void Parser::parse_token(const TokenType expected_token, std::string *value, boo
 }
 
 template<typename T>
-void Parser::convert_lexeme_to_var(Token &token, Value &value, const TokenType &token_type, bool& catched_error) {
+void Parser::convert_lexeme_to_var(Token& token, Value& value, const TokenType& token_type) {
     T result{};
     auto [ptr, ec] { std::from_chars(token.lexeme.data(), token.lexeme.data() + token.lexeme.size(), result) };
     if (ec == std::errc()) {
         value = result;
     }
     else if (ec == std::errc::result_out_of_range) {
-        _sql._errors.push_back(Error(token, ErrorType::VarOutOfRange, token_type));
-        catched_error = true;
+        throw Error(token, ErrorType::VarOutOfRange, token_type);
     }
     else {
-        _sql._errors.push_back(Error(token, ErrorType::IncorrectVarType, token_type));
-        catched_error = true;
+        throw Error(token, ErrorType::IncorrectVarType, token_type);
     }
 }
 
-void Parser::parse_operand(Operand& operand, bool& catched_error) {
+void Parser::parse_operand(Operand& operand) {
     Token token = _lexer.get();
     operand.is_id = false;
 
     switch (token.type) {
         case TokenType::VarInt:
-            convert_lexeme_to_var<long>(token, operand.val, token.type, catched_error);
+            convert_lexeme_to_var<long>(token, operand.val, token.type);
             break;
 
         case TokenType::VarReal:
-            convert_lexeme_to_var<double>(token, operand.val, token.type, catched_error);
+            convert_lexeme_to_var<double>(token, operand.val, token.type);
             break;
 
         case TokenType::VarId:
@@ -78,22 +75,16 @@ void Parser::parse_operand(Operand& operand, bool& catched_error) {
             throw Error(token, ErrorType::UnexpectedEOF);
 
         default:
-            _sql._errors.push_back(Error(token, ErrorType::VarSyntaxError));
-            catched_error = true;
+            throw Error(token, ErrorType::VarSyntaxError);
     }
 }
 
-void Parser::parse_column_def(std::vector<ColumnDef> &column_def_seq, bool& catched_error) {
-    bool no_parenthesis_opening = false;
-    parse_token(TokenType::ParenthesisOpening, NULL, no_parenthesis_opening);
-    if (no_parenthesis_opening) {
-        catched_error = no_parenthesis_opening;
-        return;
-    }
-
+void Parser::parse_column_def(std::vector<ColumnDef>& column_def_seq) {
+    parse_token(TokenType::ParenthesisOpening, NULL);
     ColumnDef column_def;
     std::vector<Token> token_seq;
     Token token;
+    bool catched_error = false;
     do {
         do {
             token = _lexer.get();
@@ -118,8 +109,7 @@ void Parser::parse_column_def(std::vector<ColumnDef> &column_def_seq, bool& catc
             }
         }
         else {
-            _sql._errors.push_back(Error(token, ErrorType::WrongListDefinition));
-            catched_error = true;
+            throw Error(token, ErrorType::WrongListDefinition);
         }
 
         token_seq.clear();
@@ -127,28 +117,32 @@ void Parser::parse_column_def(std::vector<ColumnDef> &column_def_seq, bool& catc
     if (token.type == TokenType::EndOfFile) {
         throw Error(token, ErrorType::UnexpectedEOF);
     }
+    if (catched_error) {
+        throw Error(token, ErrorType::WrongListDefinition);
+    }
 }
 
-void Parser::parse_column_list(std::vector<std::string>& column_name_seq, bool& catched_error) {
+void Parser::parse_column_list(std::vector<std::string>& column_name_seq) {
     do {
         std::string column_name;
-        parse_token(TokenType::VarId, &column_name, catched_error);
+        parse_token(TokenType::VarId, &column_name);
         column_name_seq.push_back(column_name);
     } while (_lexer.peek().type == TokenType::VarId);
 }
 
-void Parser::parse_argument_table(std::string& table_name, bool& catched_error) {
-    parse_token(TokenType::KwTable, NULL, catched_error);
-    parse_token(TokenType::VarId, &table_name, catched_error);
+void Parser::parse_argument_table(std::string& table_name) {
+    parse_token(TokenType::KwTable, NULL);
+    parse_token(TokenType::VarId, &table_name);
 }
 
-void Parser::parse_argument_into(std::string& table_name, std::vector<std::string>& column_name_seq, bool& catched_error) {
-    parse_token(TokenType::KwInto, NULL, catched_error);
-    parse_token(TokenType::VarId, &table_name, catched_error);
+void Parser::parse_argument_into(std::string& table_name, std::vector<std::string>& column_name_seq) {
+    parse_token(TokenType::KwInto, NULL);
+    parse_token(TokenType::VarId, &table_name);
 
-    parse_token(TokenType::ParenthesisOpening, NULL, catched_error);
+    parse_token(TokenType::ParenthesisOpening, NULL);
     std::vector<Token> token_seq;
     Token token;
+    bool catched_error = false;
     do {
         do {
             token = _lexer.get();
@@ -165,8 +159,7 @@ void Parser::parse_argument_into(std::string& table_name, std::vector<std::strin
             }
         }
         else {
-            _sql._errors.push_back(Error(token, ErrorType::WrongListDefinition));
-            catched_error = true;
+            throw Error(token, ErrorType::WrongListDefinition);
         }
 
         token_seq.clear();
@@ -174,13 +167,17 @@ void Parser::parse_argument_into(std::string& table_name, std::vector<std::strin
     if (token.type == TokenType::EndOfFile) {
         throw Error(token, ErrorType::UnexpectedEOF);
     }
+    if (catched_error) {
+        throw Error(token, ErrorType::WrongListDefinition);
+    }
 }
 
-void Parser::parse_argument_values(std::vector<Value>& value_seq, bool& catched_error) {
-    parse_token(TokenType::KwValues, NULL, catched_error);
-    parse_token(TokenType::ParenthesisOpening, NULL, catched_error);
+void Parser::parse_argument_values(std::vector<Value>& value_seq) {
+    parse_token(TokenType::KwValues, NULL);
+    parse_token(TokenType::ParenthesisOpening, NULL);
     std::vector<Token> token_seq;
     Token token;
+    bool catched_error = false;
     do {
         do {
             token = _lexer.get();
@@ -191,12 +188,12 @@ void Parser::parse_argument_values(std::vector<Value>& value_seq, bool& catched_
             Value value;
             switch (token_seq[0].type) {
                 case TokenType::VarInt:
-                    convert_lexeme_to_var<long>(token_seq[0], value, token_seq[0].type, catched_error);
+                    convert_lexeme_to_var<long>(token_seq[0], value, token_seq[0].type);
                     value_seq.push_back(value);
                     break;
 
                 case TokenType::VarReal:
-                    convert_lexeme_to_var<double>(token_seq[0], value, token_seq[0].type, catched_error);
+                    convert_lexeme_to_var<double>(token_seq[0], value, token_seq[0].type);
                     value_seq.push_back(value);
                     break;
 
@@ -211,8 +208,7 @@ void Parser::parse_argument_values(std::vector<Value>& value_seq, bool& catched_
             }
         }
         else {
-            _sql._errors.push_back(Error(token, ErrorType::WrongListDefinition));
-            catched_error = true;
+            throw Error(token, ErrorType::WrongListDefinition);
         }
 
         token_seq.clear();
@@ -220,101 +216,89 @@ void Parser::parse_argument_values(std::vector<Value>& value_seq, bool& catched_
     if (token.type == TokenType::EndOfFile) {
         throw Error(token, ErrorType::UnexpectedEOF);
     }
+    if (catched_error) {
+        throw Error(token, ErrorType::WrongListDefinition);
+    }
 }
 
-void Parser::parse_argument_where(Expression& expression, bool& catched_error) {
-    parse_token(TokenType::KwWhere, NULL, catched_error);
-    parse_operand(expression.loperand, catched_error);
-    parse_token(TokenType::Operation, &expression.operation, catched_error);
-    parse_operand(expression.roperand, catched_error);
+void Parser::parse_argument_where(Expression& expression) {
+    parse_token(TokenType::KwWhere, NULL);
+    parse_operand(expression.loperand);
+    parse_token(TokenType::Operation, &expression.operation);
+    parse_operand(expression.roperand);
 }
 
-void Parser::parse_argument_from(std::string& table_name, Expression& expression, bool& catched_error) {
-    parse_token(TokenType::KwFrom, NULL, catched_error);
-    parse_token(TokenType::VarId, &table_name, catched_error);
+void Parser::parse_argument_from(std::string& table_name, Expression& expression) {
+    parse_token(TokenType::KwFrom, NULL);
+    parse_token(TokenType::VarId, &table_name);
 
     if (_lexer.peek().type == TokenType::KwWhere) {
-        parse_argument_where(expression, catched_error);
+        parse_argument_where(expression);
     }
 }
 
 void Parser::parse_statement_create() {
-    bool catched_error = false;
     std::string table_name;
     std::vector<ColumnDef> column_def_seq;
 
-    parse_token(TokenType::KwCreate, NULL, catched_error);
-    parse_argument_table(table_name, catched_error);
-    parse_column_def(column_def_seq, catched_error);
-    parse_token(TokenType::Semicolon, NULL, catched_error);
+    parse_token(TokenType::KwCreate, NULL);
+    parse_argument_table(table_name);
+    parse_column_def(column_def_seq);
+    parse_token(TokenType::Semicolon, NULL);
 
-    if (!catched_error) {
-        std::unique_ptr<CreateTableStatement> create_table_statement = std::make_unique<CreateTableStatement>(table_name, column_def_seq);
-        _sql._sql_script._sql_statements.push_back(std::unique_ptr<SqlStatement>(create_table_statement.release()));
-    }
+    std::unique_ptr<CreateTableStatement> create_table_statement = std::make_unique<CreateTableStatement>(table_name, column_def_seq);
+    _sql._sql_script._sql_statements.push_back(std::unique_ptr<SqlStatement>(create_table_statement.release()));
 }
 
 void Parser::parse_statement_insert() {
-    bool catched_error = false;
     std::string table_name;
     std::vector<std::string> column_name_seq;
     std::vector<Value> value_seq;
 
-    parse_token(TokenType::KwInsert, NULL, catched_error);
-    parse_argument_into(table_name, column_name_seq, catched_error);
-    parse_argument_values(value_seq, catched_error);
-    parse_token(TokenType::Semicolon, NULL, catched_error);
+    parse_token(TokenType::KwInsert, NULL);
+    parse_argument_into(table_name, column_name_seq);
+    parse_argument_values(value_seq);
+    parse_token(TokenType::Semicolon, NULL);
 
-    if (!catched_error) {
-        std::unique_ptr<InsertStatement> insert_statement = std::make_unique<InsertStatement>(table_name, column_name_seq, value_seq);
-        _sql._sql_script._sql_statements.push_back(std::unique_ptr<SqlStatement>(insert_statement.release()));
-    }
+    std::unique_ptr<InsertStatement> insert_statement = std::make_unique<InsertStatement>(table_name, column_name_seq, value_seq);
+    _sql._sql_script._sql_statements.push_back(std::unique_ptr<SqlStatement>(insert_statement.release()));
 }
 
 void Parser::parse_statement_select() {
-    bool catched_error = false;
     std::vector<std::string> column_name_seq;
     std::string table_name;
     Expression expression{0, "N", 0};
 
-    parse_token(TokenType::KwSelect, NULL, catched_error);
-    parse_column_list(column_name_seq, catched_error);
-    parse_argument_from(table_name, expression, catched_error);
-    parse_token(TokenType::Semicolon, NULL, catched_error);
+    parse_token(TokenType::KwSelect, NULL);
+    parse_column_list(column_name_seq);
+    parse_argument_from(table_name, expression);
+    parse_token(TokenType::Semicolon, NULL);
 
-    if (!catched_error) {
-        std::unique_ptr<SelectStatement> select_statement = std::make_unique<SelectStatement>(table_name, column_name_seq, expression);
-        _sql._sql_script._sql_statements.push_back(std::unique_ptr<SqlStatement>(select_statement.release()));
-    }
+    std::unique_ptr<SelectStatement> select_statement = std::make_unique<SelectStatement>(table_name, column_name_seq, expression);
+    _sql._sql_script._sql_statements.push_back(std::unique_ptr<SqlStatement>(select_statement.release()));
 }
 
 void Parser::parse_statement_delete() {
-    bool catched_error = false;
     std::string table_name;
     Expression expression{0, "N", 0};
 
-    parse_token(TokenType::KwDelete, NULL, catched_error);
-    parse_argument_from(table_name, expression, catched_error);
-    parse_token(TokenType::Semicolon, NULL, catched_error);
+    parse_token(TokenType::KwDelete, NULL);
+    parse_argument_from(table_name, expression);
+    parse_token(TokenType::Semicolon, NULL);
 
-    if (!catched_error) {
-        std::unique_ptr<DeleteFromStatement> delete_statement = std::make_unique<DeleteFromStatement>(table_name, expression);
-        _sql._sql_script._sql_statements.push_back(std::unique_ptr<SqlStatement>(delete_statement.release()));
-    }
+    std::unique_ptr<DeleteFromStatement> delete_statement = std::make_unique<DeleteFromStatement>(table_name, expression);
+    _sql._sql_script._sql_statements.push_back(std::unique_ptr<SqlStatement>(delete_statement.release()));
 }
 
 void Parser::parse_statement_drop() {
-    bool catched_error = false;
     std::string table_name;
 
-    parse_token(TokenType::KwDrop, NULL, catched_error);
-    parse_argument_table(table_name, catched_error);
-    parse_token(TokenType::Semicolon, NULL, catched_error);
+    parse_token(TokenType::KwDrop, NULL);
+    parse_argument_table(table_name);
+    parse_token(TokenType::Semicolon, NULL);
 
-    if (!catched_error) {
-        std::unique_ptr<DropTableStatement> drop_statement = std::make_unique<DropTableStatement>(table_name);
-        _sql._sql_script._sql_statements.push_back(std::unique_ptr<SqlStatement>(drop_statement.release()));
-    }
+    std::unique_ptr<DropTableStatement> drop_statement = std::make_unique<DropTableStatement>(table_name);
+    _sql._sql_script._sql_statements.push_back(std::unique_ptr<SqlStatement>(drop_statement.release()));
 }
 
 void Parser::parse_sql(ParseResult& sql) {
@@ -323,31 +307,51 @@ void Parser::parse_sql(ParseResult& sql) {
     token = _lexer.peek();
     try {
         while (token.type != TokenType::EndOfFile) {
-            switch (token.type) {
-                case TokenType::KwCreate:
-                    parse_statement_create();
-                    break;
+            try {
+                switch (token.type) {
+                    case TokenType::KwCreate:
+                        parse_statement_create();
+                        break;
 
-                case TokenType::KwDelete:
-                    parse_statement_delete();
-                    break;
+                    case TokenType::KwDelete:
+                        parse_statement_delete();
+                        break;
 
-                case TokenType::KwInsert:
-                    parse_statement_insert();
-                    break;
+                    case TokenType::KwInsert:
+                        parse_statement_insert();
+                        break;
 
-                case TokenType::KwSelect:
-                    parse_statement_select();
-                    break;
+                    case TokenType::KwSelect:
+                        parse_statement_select();
+                        break;
 
-                case TokenType::KwDrop:
-                    parse_statement_drop();
-                    break;
+                    case TokenType::KwDrop:
+                        parse_statement_drop();
+                        break;
 
-                default:
-                    token = _lexer.get();
-                    _sql._errors.push_back(Error(token, ErrorType::NotStatement));
+                    default:
+                        token = _lexer.get();
+                        _sql._errors.push_back(Error(token, ErrorType::NotStatement));
+                }
             }
+            catch (const Error& error) {
+                switch (error.type()) {
+                    case ErrorType::UnexpectedEOF:
+                        throw error;
+
+                    default:
+                        _sql._errors.push_back(error);
+                        if (error.token_type() != TokenType::Semicolon) {
+                            do {
+                                token = _lexer.get();
+                            } while ((token.type != TokenType::Semicolon) && (token.type != TokenType::EndOfFile));
+                            if (token.type == TokenType::EndOfFile) {
+                                throw Error(token, ErrorType::UnexpectedEOF);
+                            }
+                        }
+                }
+            }
+            
 
             token = _lexer.peek();
         }

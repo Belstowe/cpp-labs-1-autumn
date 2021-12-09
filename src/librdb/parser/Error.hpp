@@ -1,6 +1,6 @@
 #pragma once
 
-#include "librdb/rdbtoken.hpp"
+#include "librdb/Token.hpp"
 
 namespace rdb::parser {
     enum class ErrorType {

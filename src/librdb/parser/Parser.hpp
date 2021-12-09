@@ -2,8 +2,8 @@
 
 #include "SqlStatement.hpp"
 #include "Error.hpp"
-#include "librdb/lexer/lexer.hpp"
-#include "librdb/rdbtoken.hpp"
+#include "librdb/lexer/Lexer.hpp"
+#include "librdb/Token.hpp"
 #include <memory>
 
 namespace rdb::parser {

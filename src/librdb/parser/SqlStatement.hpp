@@ -1,6 +1,6 @@
 #pragma once
 
-#include "librdb/rdbtoken.hpp"
+#include "librdb/Token.hpp"
 #include <initializer_list>
 #include <string>
 #include <variant>

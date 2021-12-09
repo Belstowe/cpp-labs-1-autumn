@@ -21,8 +21,6 @@ namespace rdb::parser {
         std::vector<Error> _errors;
     };
 
-    std::ostream& operator<<(std::ostream& os, const rdb::parser::ParseResult& parse_result);
-
     class Parser {
         public:
             explicit Parser(Lexer& lexer);

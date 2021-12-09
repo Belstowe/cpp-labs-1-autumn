@@ -11,14 +11,6 @@ std::ostream& rdb::parser::operator<<(std::ostream& os, const rdb::parser::SqlSc
     return os;
 }
 
-std::ostream& rdb::parser::operator<<(std::ostream& os, const rdb::parser::ParseResult& parse_result) {
-    os << parse_result._sql_script << "\n";
-    for (auto&& error: parse_result._errors) {
-        os << "\n" << error;
-    }
-    return os;
-}
-
 Parser::Parser(Lexer& lexer)
     : _lexer{lexer}
 {

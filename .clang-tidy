@@ -13,7 +13,8 @@ Checks: '
     -cert-err58-cpp,
     -bugprone-exception-escape,
     -google-readability-namespace-comments,
-    -altera-struct-pack-align
+    -altera-struct-pack-align,
+    -google-runtime-int
     '
 WarningsAsErrors: ''
 HeaderFilterRegex: ''

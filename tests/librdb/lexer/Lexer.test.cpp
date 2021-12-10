@@ -1,12 +1,10 @@
+#include "librdb/lexer/Lexer.hpp"
+#include "gtest/gtest.h"
 #include <algorithm>
 #include <queue>
 #include <string>
 #include <string_view>
 #include <vector>
-
-#include "gtest/gtest.h"
-
-#include "librdb/lexer/lexer.hpp"
 
 using rdb::parser::Lexer;
 using rdb::parser::Token;
@@ -200,4 +198,26 @@ TEST(LexerTest, LexerPeekTest)
     token = lexer.peek();
     ASSERT_EQ(token.type, TokenType::VarId);
     ASSERT_EQ(token.lexeme, "a");
+}
+
+TEST(LexerTest, CorrectColRowInfo)
+{
+    std::string instring("INT a;\nText s = \"aaa bbb\";\nreal b = 1.0");
+    Lexer lexer(instring);
+    std::vector<Token> token_seq;
+    std::vector<size_t> token_col_expected_seq(
+            {1, 5, 6, 1, 6, 8, 10, 19, 1, 6, 8, 10, 13});
+    std::vector<size_t> token_row_expected_seq(
+            {1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3});
+
+    do {
+        token_seq.push_back(lexer.get());
+    } while (token_seq.back().type != TokenType::EndOfFile);
+
+    ASSERT_EQ(token_col_expected_seq.size(), token_seq.size());
+    int count = token_col_expected_seq.size();
+    for (int i = 0; i < count; i++) {
+        ASSERT_EQ(token_seq[i].parsed_col, token_col_expected_seq[i]);
+        ASSERT_EQ(token_seq[i].parsed_row, token_row_expected_seq[i]);
+    }
 }

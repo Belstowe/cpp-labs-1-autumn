@@ -36,8 +36,15 @@ enum class TokenType {
 struct Token {
     TokenType type;
     std::string_view lexeme;
-    Token(TokenType type = TokenType::Unknown, std::string_view lexeme = "");
+    size_t parsed_col;
+    size_t parsed_row;
+    Token(TokenType type = TokenType::Unknown,
+          std::string_view lexeme = "",
+          size_t parsed_col = 0,
+          size_t parsed_row = 0);
 };
-}
 
 std::ostream& operator<<(std::ostream& os, const rdb::parser::Token& token);
+std::ostream&
+operator<<(std::ostream& os, const rdb::parser::TokenType& token_type);
+} // namespace rdb::parser

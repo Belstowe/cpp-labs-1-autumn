@@ -1,4 +1,4 @@
-#include "lexer.hpp"
+#include "Lexer.hpp"
 #include <algorithm>
 #include <cctype>
 #include <regex>
@@ -23,8 +23,8 @@ const std::vector<TokenRule> TokenRules = {
         {TokenType::KwDelete,            std::regex("DELETE", std::regex_constants::icase)},
         {TokenType::KwDrop,              std::regex("DROP", std::regex_constants::icase)},
         {TokenType::KwFrom,              std::regex("FROM", std::regex_constants::icase)},
-        {TokenType::KwInt,               std::regex("INT", std::regex_constants::icase)},
         {TokenType::KwInto,              std::regex("INTO", std::regex_constants::icase)},
+        {TokenType::KwInt,               std::regex("INT", std::regex_constants::icase)},
         {TokenType::KwReal,              std::regex("REAL", std::regex_constants::icase)},
         {TokenType::KwSelect,            std::regex("SELECT", std::regex_constants::icase)},
         {TokenType::KwTable,             std::regex("TABLE", std::regex_constants::icase)},
@@ -44,14 +44,14 @@ const std::vector<TokenRule> TokenRules = {
 } // namespace
 
 Lexer::Lexer(std::string_view parse_string_view)
-    : parse_string{parse_string_view}, string_pos{0}
+    : parse_string{parse_string_view}, string_pos{0}, col{1}, row{1}
 {
 }
 
 Token Lexer::peek()
 {
     if (string_pos == parse_string.length()) {
-        return Token(TokenType::EndOfFile, "");
+        return Token(TokenType::EndOfFile, "", col, row);
     }
 
     while (std::end(Lexer::skipsym)
@@ -59,8 +59,13 @@ Token Lexer::peek()
                    std::begin(Lexer::skipsym),
                    std::end(Lexer::skipsym),
                    parse_string.at(string_pos))) {
+        col++;
+        if (parse_string.at(string_pos) == '\n') {
+            col = 1;
+            row++;
+        }
         if (++string_pos == parse_string.length()) {
-            return Token(TokenType::EndOfFile, "");
+            return Token(TokenType::EndOfFile, "", col, row);
         }
     }
 
@@ -71,22 +76,34 @@ Token Lexer::peek()
                     match,
                     rule.regex,
                     std::regex_constants::match_continuous)) {
-            return Token(
+            Token token_to_return(
                     rule.tokentype,
                     std::string_view(
                             parse_string.data() + string_pos,
-                            match.begin()->length()));
+                            match.begin()->length()),
+                    col,
+                    row);
+            return token_to_return;
         }
     }
 
     return Token(
             TokenType::Unknown,
-            std::string_view(parse_string.data() + string_pos++, 1));
+            std::string_view(parse_string.data() + string_pos++, 1),
+            col,
+            row);
 }
 
 Token Lexer::get()
 {
     auto res_token = peek();
+    for (char sym : res_token.lexeme) {
+        col++;
+        if (sym == '\n') {
+            col = 1;
+            row++;
+        }
+    }
     string_pos += res_token.lexeme.length();
     return res_token;
 }

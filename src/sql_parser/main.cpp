@@ -1,7 +1,8 @@
 #include "CLI/App.hpp"
 #include "CLI/Config.hpp"
 #include "CLI/Formatter.hpp"
-#include "librdb/lexer/lexer.hpp"
+#include "librdb/lexer/Lexer.hpp"
+#include "librdb/parser/Parser.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -40,22 +41,18 @@ int main(int argc, char* argv[])
 
     std::ostream* output_stream = &std::cout;
     if (*opt_o) {
-        output_file_stream.open(
-                output_file, std::ofstream::out | std::ofstream::app);
+        output_file_stream.open(output_file, std::ofstream::out);
         output_stream = &output_file_stream;
     }
 
     rdb::parser::Lexer lexer(sql_inquiry);
-    rdb::parser::Token current_token;
-    while (true) {
-        current_token = lexer.get();
-        *output_stream << current_token << '\n';
-        if (current_token.type == rdb::parser::TokenType::EndOfFile) {
-            break;
-        }
-        if (current_token.type == rdb::parser::TokenType::Unknown) {
-            std::clog << current_token.lexeme << ": Unknown type\n";
-        }
+    rdb::parser::Parser parser(lexer);
+    rdb::parser::ParseResult sql;
+    parser.parse_sql(sql);
+
+    *output_stream << sql._sql_script << "\n";
+    for (auto&& error : sql._errors) {
+        std::clog << error << "\n";
     }
 
     if (input_file_stream.is_open()) {

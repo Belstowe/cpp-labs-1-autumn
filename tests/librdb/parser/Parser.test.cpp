@@ -1,5 +1,5 @@
-#include "librdb/parser/Parser.hpp"
 #include "librdb/lexer/Lexer.hpp"
+#include "librdb/parser/Parser.hpp"
 #include "gtest/gtest.h"
 #include <string>
 #include <string_view>

@@ -97,9 +97,9 @@ Token Lexer::peek()
 Token Lexer::get()
 {
     auto res_token = peek();
-    for (size_t index = 0; index < res_token.lexeme.length(); index++) {
+    for (char sym : res_token.lexeme) {
         col++;
-        if (res_token.lexeme.at(index) == '\n') {
+        if (sym == '\n') {
             col = 1;
             row++;
         }

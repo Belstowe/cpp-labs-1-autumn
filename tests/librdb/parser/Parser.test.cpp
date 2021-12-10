@@ -27,7 +27,8 @@ TEST(ParserTest, CreateStatementExtraction)
     ASSERT_EQ(sql._errors.size(), 0);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 1);
     ASSERT_EQ(
-            typeid(sql._sql_script._sql_statements[0].get()),
+            typeid(dynamic_cast<rdb::parser::CreateTableStatement*>(
+                    sql._sql_script._sql_statements[0].get())),
             typeid(rdb::parser::CreateTableStatement*));
 
     rdb::parser::CreateTableStatement statement
@@ -60,7 +61,8 @@ TEST(ParserTest, InsertStatementExtraction)
     ASSERT_EQ(sql._errors.size(), 0);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 1);
     ASSERT_EQ(
-            typeid(sql._sql_script._sql_statements[0].get()),
+            typeid(dynamic_cast<rdb::parser::InsertStatement*>(
+                    sql._sql_script._sql_statements[0].get())),
             typeid(rdb::parser::InsertStatement*));
 
     rdb::parser::InsertStatement statement
@@ -92,10 +94,12 @@ TEST(ParserTest, SelectStatementExtraction)
     ASSERT_EQ(sql._errors.size(), 0);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 2);
     ASSERT_EQ(
-            typeid(sql._sql_script._sql_statements[0].get()),
+            typeid(dynamic_cast<rdb::parser::SelectStatement*>(
+                    sql._sql_script._sql_statements[0].get())),
             typeid(rdb::parser::SelectStatement*));
     ASSERT_EQ(
-            typeid(sql._sql_script._sql_statements[1].get()),
+            typeid(dynamic_cast<rdb::parser::SelectStatement*>(
+                    sql._sql_script._sql_statements[1].get())),
             typeid(rdb::parser::SelectStatement*));
 
     rdb::parser::SelectStatement statement_expr
@@ -137,10 +141,12 @@ TEST(ParserTest, DeleteStatementExtraction)
     ASSERT_EQ(sql._errors.size(), 0);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 2);
     ASSERT_EQ(
-            typeid(sql._sql_script._sql_statements[0].get()),
+            typeid(dynamic_cast<rdb::parser::DeleteFromStatement*>(
+                    sql._sql_script._sql_statements[0].get())),
             typeid(rdb::parser::DeleteFromStatement*));
     ASSERT_EQ(
-            typeid(sql._sql_script._sql_statements[1].get()),
+            typeid(dynamic_cast<rdb::parser::DeleteFromStatement*>(
+                    sql._sql_script._sql_statements[1].get())),
             typeid(rdb::parser::DeleteFromStatement*));
 
     rdb::parser::DeleteFromStatement statement_no_expr
@@ -173,7 +179,8 @@ TEST(ParserTest, DropStatementExtraction)
     ASSERT_EQ(sql._errors.size(), 0);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 1);
     ASSERT_EQ(
-            typeid(sql._sql_script._sql_statements[0].get()),
+            typeid(dynamic_cast<rdb::parser::DropTableStatement*>(
+                    sql._sql_script._sql_statements[0].get())),
             typeid(rdb::parser::DropTableStatement*));
 
     rdb::parser::DropTableStatement statement
@@ -197,13 +204,16 @@ TEST(ParserTest, LawfulInput)
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 3);
 
     ASSERT_EQ(
-            typeid(sql._sql_script._sql_statements[0].get()),
+            typeid(dynamic_cast<rdb::parser::CreateTableStatement*>(
+                    sql._sql_script._sql_statements[0].get())),
             typeid(rdb::parser::CreateTableStatement*));
     ASSERT_EQ(
-            typeid(sql._sql_script._sql_statements[1].get()),
+            typeid(dynamic_cast<rdb::parser::InsertStatement*>(
+                    sql._sql_script._sql_statements[1].get())),
             typeid(rdb::parser::InsertStatement*));
     ASSERT_EQ(
-            typeid(sql._sql_script._sql_statements[2].get()),
+            typeid(dynamic_cast<rdb::parser::DropTableStatement*>(
+                    sql._sql_script._sql_statements[2].get())),
             typeid(rdb::parser::DropTableStatement*));
 }
 
@@ -222,7 +232,8 @@ TEST(ParserTest, PartlyChaoticInput)
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 1);
 
     ASSERT_EQ(
-            typeid(sql._sql_script._sql_statements[0].get()),
+            typeid(dynamic_cast<rdb::parser::InsertStatement*>(
+                    sql._sql_script._sql_statements[0].get())),
             typeid(rdb::parser::InsertStatement*));
 }
 

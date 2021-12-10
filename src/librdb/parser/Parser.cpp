@@ -78,6 +78,9 @@ void Parser::parse_operand(Operand& operand)
 
     case TokenType::VarId:
         operand.is_id = true;
+        operand.val = std::string(token.lexeme);
+        break;
+
     case TokenType::VarText:
         operand.val = std::string(token.lexeme);
         break;

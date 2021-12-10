@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../rdbtoken.hpp"
+#include "librdb/Token.hpp"
 #include <string_view>
 #include <unordered_map>
 

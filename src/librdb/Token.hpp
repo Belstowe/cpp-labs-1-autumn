@@ -43,6 +43,8 @@ struct Token {
           size_t parsed_col = 0,
           size_t parsed_row = 0);
 };
-}
 
 std::ostream& operator<<(std::ostream& os, const rdb::parser::Token& token);
+std::ostream&
+operator<<(std::ostream& os, const rdb::parser::TokenType& token_type);
+} // namespace rdb::parser

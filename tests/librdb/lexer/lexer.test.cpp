@@ -1,12 +1,10 @@
+#include "librdb/lexer/Lexer.hpp"
+#include "gtest/gtest.h"
 #include <algorithm>
 #include <queue>
 #include <string>
 #include <string_view>
 #include <vector>
-
-#include "gtest/gtest.h"
-
-#include "librdb/lexer/lexer.hpp"
 
 using rdb::parser::Lexer;
 using rdb::parser::Token;

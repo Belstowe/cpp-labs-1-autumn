@@ -63,7 +63,8 @@ private:
 
 public:
     ~InsertStatement() = default;
-    InsertStatement(std::string&&, std::vector<std::string>&&, std::vector<Value>&&);
+    InsertStatement(
+            std::string&&, std::vector<std::string>&&, std::vector<Value>&&);
     void print(std::ostream& os) const;
     std::string table_name() const;
     std::string column_name(size_t index) const;
@@ -100,7 +101,8 @@ private:
 
 public:
     ~DeleteFromStatement() = default;
-    DeleteFromStatement(std::string&&, const Expression& = Expression{0, "N", 0});
+    DeleteFromStatement(
+            std::string&&, const Expression& = Expression{0, "N", 0});
     void print(std::ostream& os) const;
     std::string table_name() const;
     bool has_expression() const;

@@ -39,7 +39,7 @@ Operand::Operand(long val) : is_id{false}, val{val}
 
 CreateTableStatement::CreateTableStatement(
         std::string&& table_name, std::vector<ColumnDef>&& column_def_seq)
-    : _table_name{std::move(table_name)}, _column_def_seq{std::move(column_def_seq)}
+    : _table_name{table_name}, _column_def_seq{column_def_seq}
 {
 }
 
@@ -78,9 +78,9 @@ InsertStatement::InsertStatement(
         std::string&& table_name,
         std::vector<std::string>&& column_name_seq,
         std::vector<Value>&& value_seq)
-    : _table_name{std::move(table_name)},
-      _column_name_seq{std::move(column_name_seq)},
-      _value_seq{std::move(value_seq)}
+    : _table_name{table_name},
+      _column_name_seq{column_name_seq},
+      _value_seq{value_seq}
 {
 }
 
@@ -124,7 +124,10 @@ SelectStatement::SelectStatement(
         std::string&& table_name,
         std::vector<std::string>&& column_name_seq,
         const Expression& expression)
-    : _table_name{std::move(table_name)}, _column_name_seq{std::move(column_name_seq)}, _has_expression_cond{expression.operation != "N"}, _expression{expression}
+    : _table_name{table_name},
+      _column_name_seq{column_name_seq},
+      _has_expression_cond{expression.operation != "N"},
+      _expression{expression}
 {
 }
 
@@ -178,7 +181,9 @@ void SelectStatement::print(std::ostream& os) const
 
 DeleteFromStatement::DeleteFromStatement(
         std::string&& table_name, const Expression& expression)
-    : _table_name{std::move(table_name)}, _has_expression_cond{expression.operation != "N"}, _expression{expression}
+    : _table_name{table_name},
+      _has_expression_cond{expression.operation != "N"},
+      _expression{expression}
 {
 }
 
@@ -213,7 +218,7 @@ void DeleteFromStatement::print(std::ostream& os) const
 }
 
 DropTableStatement::DropTableStatement(std::string&& table_name)
-    : _table_name{std::move(table_name)}
+    : _table_name{table_name}
 {
 }
 

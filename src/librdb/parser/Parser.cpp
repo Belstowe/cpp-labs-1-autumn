@@ -322,8 +322,7 @@ void Parser::parse_sql(ParseResult& sql) {
                         break;
 
                     default:
-                        token = _lexer.get();
-                        _sql._errors.push_back(Error(token, ErrorType::NotStatement));
+                        throw Error(token, ErrorType::NotStatement);
                 }
             }
             catch (const Error& error) {

@@ -37,6 +37,18 @@ CreateTableStatement::CreateTableStatement(std::string table_name, std::vector<C
 {
 }
 
+std::string CreateTableStatement::table_name() const {
+    return _table_name;
+}
+
+ColumnDef CreateTableStatement::column_def(size_t index) const {
+    return _column_def_seq.at(index);
+}
+
+size_t CreateTableStatement::columns_defined() const {
+    return _column_def_seq.size();
+}
+
 void CreateTableStatement::print(std::ostream& os) const {
     os << "\"create_statement\":\n\t";
     os << "{ \n\t";
@@ -55,6 +67,22 @@ void CreateTableStatement::print(std::ostream& os) const {
 InsertStatement::InsertStatement(std::string table_name, std::vector<std::string> column_name_seq, std::vector<Value> value_seq)
     : _table_name{table_name}, _column_name_seq{column_name_seq}, _value_seq{value_seq}
 {
+}
+
+std::string InsertStatement::table_name() const {
+    return _table_name;
+}
+
+std::string InsertStatement::column_name(size_t index) const {
+    return _column_name_seq.at(index);
+}
+
+size_t InsertStatement::columns_defined() const {
+    return _column_name_seq.size();
+}
+
+Value InsertStatement::value(size_t index) const {
+    return _value_seq.at(index);
 }
 
 void InsertStatement::print(std::ostream& os) const {
@@ -76,6 +104,31 @@ SelectStatement::SelectStatement(std::string table_name, std::vector<std::string
     : _table_name{table_name}, _column_name_seq{column_name_seq}, _expression{expression}
 {
     _has_expression_cond = (expression.operation == "N") ? false : true;
+}
+
+std::string SelectStatement::table_name() const {
+    return _table_name;
+}
+
+std::string SelectStatement::column_name(size_t index) const {
+    return _column_name_seq.at(index);
+}
+
+size_t SelectStatement::columns_defined() const {
+    return _column_name_seq.size();
+}
+
+bool SelectStatement::has_expression() const {
+    return _has_expression_cond;
+}
+
+Expression SelectStatement::expression() const {
+    if (_has_expression_cond) {
+        return _expression;
+    }
+    else {
+        throw std::runtime_error("SelectStatement: No expression defined");
+    }
 }
 
 void SelectStatement::print(std::ostream& os) const {
@@ -103,6 +156,23 @@ DeleteFromStatement::DeleteFromStatement(std::string table_name, Expression expr
     _has_expression_cond = (expression.operation == "N") ? false : true;
 }
 
+std::string DeleteFromStatement::table_name() const {
+    return _table_name;
+}
+
+bool DeleteFromStatement::has_expression() const {
+    return _has_expression_cond;
+}
+
+Expression DeleteFromStatement::expression() const {
+    if (_has_expression_cond) {
+        return _expression;
+    }
+    else {
+        throw std::runtime_error("DeleteFromStatement: No expression defined");
+    }
+}
+
 void DeleteFromStatement::print(std::ostream& os) const {
     os << "\"delete_statement\":\n\t";
     os << "{ \n\t";
@@ -117,6 +187,10 @@ void DeleteFromStatement::print(std::ostream& os) const {
 DropTableStatement::DropTableStatement(std::string table_name)
     : _table_name{table_name}
 {
+}
+
+std::string DropTableStatement::table_name() const {
+    return _table_name;
 }
 
 void DropTableStatement::print(std::ostream& os) const {

@@ -50,6 +50,9 @@ namespace rdb::parser {
             ~CreateTableStatement() = default;
             CreateTableStatement(std::string, std::vector<ColumnDef>);
             void print(std::ostream& os) const;
+            std::string table_name() const;
+            ColumnDef column_def(size_t index) const;
+            size_t columns_defined() const;
     };
 
     class InsertStatement : public SqlStatement {
@@ -62,6 +65,10 @@ namespace rdb::parser {
             ~InsertStatement() = default;
             InsertStatement(std::string, std::vector<std::string>, std::vector<Value>);
             void print(std::ostream& os) const;
+            std::string table_name() const;
+            std::string column_name(size_t index) const;
+            size_t columns_defined() const;
+            Value value(size_t index) const;
     };
 
     class SelectStatement : public SqlStatement {
@@ -75,6 +82,11 @@ namespace rdb::parser {
             ~SelectStatement() = default;
             SelectStatement(std::string, std::vector<std::string>, Expression = Expression{0, "N", 0} );
             void print(std::ostream& os) const;
+            std::string table_name() const;
+            std::string column_name(size_t index) const;
+            size_t columns_defined() const;
+            bool has_expression() const;
+            Expression expression() const;
     };
 
     class DeleteFromStatement : public SqlStatement {
@@ -87,6 +99,9 @@ namespace rdb::parser {
             ~DeleteFromStatement() = default;
             DeleteFromStatement(std::string, Expression = Expression{0, "N", 0} );
             void print(std::ostream& os) const;
+            std::string table_name() const;
+            bool has_expression() const;
+            Expression expression() const;
     };
 
     class DropTableStatement : public SqlStatement {
@@ -97,5 +112,6 @@ namespace rdb::parser {
             ~DropTableStatement() = default;
             DropTableStatement(std::string);
             void print(std::ostream& os) const;
+            std::string table_name() const;
     };
 } // namespace rdb::parser

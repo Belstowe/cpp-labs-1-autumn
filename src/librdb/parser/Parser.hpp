@@ -30,10 +30,12 @@ private:
     Lexer& _lexer;
     ParseResult _sql;
 
-    void parse_token(const TokenType expected_token, std::string* value);
     template <typename T>
-    void convert_lexeme_to_var(
+    static void convert_lexeme_to_var(
             Token& token, Value& value, const TokenType& token_type);
+    static void convert_lexeme_to_double(Token& token, Value& value);
+
+    void parse_token(const TokenType expected_token, std::string* value);
     void parse_operand(Operand& operand);
     void parse_column_def(std::vector<ColumnDef>& column_def_seq);
     void parse_column_list(std::vector<std::string>& column_name_seq);

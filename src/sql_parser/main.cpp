@@ -1,7 +1,7 @@
 #include "CLI/App.hpp"
 #include "CLI/Config.hpp"
 #include "CLI/Formatter.hpp"
-#include "librdb/lexer/lexer.hpp"
+#include "librdb/lexer/Lexer.hpp"
 #include "librdb/parser/Parser.hpp"
 
 #include <fstream>

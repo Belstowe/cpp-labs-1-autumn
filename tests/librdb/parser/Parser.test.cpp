@@ -27,8 +27,8 @@ TEST(ParserTest, CreateStatementExtraction)
     ASSERT_EQ(sql._errors.size(), 0);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 1);
     ASSERT_EQ(
-            typeid(*sql._sql_script._sql_statements[0].get()),
-            typeid(rdb::parser::CreateTableStatement));
+            typeid(sql._sql_script._sql_statements[0].get()),
+            typeid(rdb::parser::CreateTableStatement*));
 
     rdb::parser::CreateTableStatement statement
             = dynamic_cast<rdb::parser::CreateTableStatement&>(
@@ -60,8 +60,8 @@ TEST(ParserTest, InsertStatementExtraction)
     ASSERT_EQ(sql._errors.size(), 0);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 1);
     ASSERT_EQ(
-            typeid(*sql._sql_script._sql_statements[0].get()),
-            typeid(rdb::parser::InsertStatement));
+            typeid(sql._sql_script._sql_statements[0].get()),
+            typeid(rdb::parser::InsertStatement*));
 
     rdb::parser::InsertStatement statement
             = dynamic_cast<rdb::parser::InsertStatement&>(
@@ -92,11 +92,11 @@ TEST(ParserTest, SelectStatementExtraction)
     ASSERT_EQ(sql._errors.size(), 0);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 2);
     ASSERT_EQ(
-            typeid(*sql._sql_script._sql_statements[0].get()),
-            typeid(rdb::parser::SelectStatement));
+            typeid(sql._sql_script._sql_statements[0].get()),
+            typeid(rdb::parser::SelectStatement*));
     ASSERT_EQ(
-            typeid(*sql._sql_script._sql_statements[1].get()),
-            typeid(rdb::parser::SelectStatement));
+            typeid(sql._sql_script._sql_statements[1].get()),
+            typeid(rdb::parser::SelectStatement*));
 
     rdb::parser::SelectStatement statement_expr
             = dynamic_cast<rdb::parser::SelectStatement&>(
@@ -137,11 +137,11 @@ TEST(ParserTest, DeleteStatementExtraction)
     ASSERT_EQ(sql._errors.size(), 0);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 2);
     ASSERT_EQ(
-            typeid(*sql._sql_script._sql_statements[0].get()),
-            typeid(rdb::parser::DeleteFromStatement));
+            typeid(sql._sql_script._sql_statements[0].get()),
+            typeid(rdb::parser::DeleteFromStatement*));
     ASSERT_EQ(
-            typeid(*sql._sql_script._sql_statements[1].get()),
-            typeid(rdb::parser::DeleteFromStatement));
+            typeid(sql._sql_script._sql_statements[1].get()),
+            typeid(rdb::parser::DeleteFromStatement*));
 
     rdb::parser::DeleteFromStatement statement_no_expr
             = dynamic_cast<rdb::parser::DeleteFromStatement&>(
@@ -173,8 +173,8 @@ TEST(ParserTest, DropStatementExtraction)
     ASSERT_EQ(sql._errors.size(), 0);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 1);
     ASSERT_EQ(
-            typeid(*sql._sql_script._sql_statements[0].get()),
-            typeid(rdb::parser::DropTableStatement));
+            typeid(sql._sql_script._sql_statements[0].get()),
+            typeid(rdb::parser::DropTableStatement*));
 
     rdb::parser::DropTableStatement statement
             = dynamic_cast<rdb::parser::DropTableStatement&>(
@@ -197,14 +197,14 @@ TEST(ParserTest, LawfulInput)
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 3);
 
     ASSERT_EQ(
-            typeid(*sql._sql_script._sql_statements[0].get()),
-            typeid(rdb::parser::CreateTableStatement));
+            typeid(sql._sql_script._sql_statements[0].get()),
+            typeid(rdb::parser::CreateTableStatement*));
     ASSERT_EQ(
-            typeid(*sql._sql_script._sql_statements[1].get()),
-            typeid(rdb::parser::InsertStatement));
+            typeid(sql._sql_script._sql_statements[1].get()),
+            typeid(rdb::parser::InsertStatement*));
     ASSERT_EQ(
-            typeid(*sql._sql_script._sql_statements[2].get()),
-            typeid(rdb::parser::DropTableStatement));
+            typeid(sql._sql_script._sql_statements[2].get()),
+            typeid(rdb::parser::DropTableStatement*));
 }
 
 TEST(ParserTest, PartlyChaoticInput)
@@ -222,8 +222,8 @@ TEST(ParserTest, PartlyChaoticInput)
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 1);
 
     ASSERT_EQ(
-            typeid(*sql._sql_script._sql_statements[0].get()),
-            typeid(rdb::parser::InsertStatement));
+            typeid(sql._sql_script._sql_statements[0].get()),
+            typeid(rdb::parser::InsertStatement*));
 }
 
 TEST(ParserTest, Misprints)

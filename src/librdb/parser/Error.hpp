@@ -16,7 +16,7 @@ enum class ErrorType {
     Undefined
 };
 
-class Error {
+class Error : public std::exception {
 public:
     Error(Token token, ErrorType type, TokenType expected = TokenType::Unknown);
     ErrorType type() const;

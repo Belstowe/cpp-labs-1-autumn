@@ -14,8 +14,8 @@ std::ostream& operator<<(std::ostream& os, const Value& value);
 struct Operand {
     bool is_id;
     Value val;
-    Operand(Value val, bool is_id = false);
-    Operand(long val);
+    Operand(Value&& val, const bool is_id = false);
+    Operand(long&& val);
 };
 
 std::ostream& operator<<(std::ostream& os, const Operand& operand);
@@ -48,7 +48,7 @@ private:
 
 public:
     ~CreateTableStatement() = default;
-    CreateTableStatement(std::string, std::vector<ColumnDef>);
+    CreateTableStatement(std::string&&, std::vector<ColumnDef>&&);
     void print(std::ostream& os) const;
     std::string table_name() const;
     ColumnDef column_def(size_t index) const;
@@ -63,7 +63,8 @@ private:
 
 public:
     ~InsertStatement() = default;
-    InsertStatement(std::string, std::vector<std::string>, std::vector<Value>);
+    InsertStatement(
+            std::string&&, std::vector<std::string>&&, std::vector<Value>&&);
     void print(std::ostream& os) const;
     std::string table_name() const;
     std::string column_name(size_t index) const;
@@ -81,9 +82,9 @@ private:
 public:
     ~SelectStatement() = default;
     SelectStatement(
-            std::string,
-            std::vector<std::string>,
-            Expression = Expression{0, "N", 0});
+            std::string&&,
+            std::vector<std::string>&&,
+            const Expression& = Expression{0, "N", 0});
     void print(std::ostream& os) const;
     std::string table_name() const;
     std::string column_name(size_t index) const;
@@ -100,7 +101,8 @@ private:
 
 public:
     ~DeleteFromStatement() = default;
-    DeleteFromStatement(std::string, Expression = Expression{0, "N", 0});
+    DeleteFromStatement(
+            std::string&&, const Expression& = Expression{0, "N", 0});
     void print(std::ostream& os) const;
     std::string table_name() const;
     bool has_expression() const;
@@ -113,7 +115,7 @@ private:
 
 public:
     ~DropTableStatement() = default;
-    DropTableStatement(std::string);
+    DropTableStatement(std::string&&);
     void print(std::ostream& os) const;
     std::string table_name() const;
 };

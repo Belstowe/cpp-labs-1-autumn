@@ -2,7 +2,6 @@
 
 using rdb::parser::Error;
 using rdb::parser::ErrorType;
-using rdb::parser::Token;
 using rdb::parser::TokenType;
 
 Error::Error(Token token, ErrorType type, TokenType expected)

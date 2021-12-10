@@ -29,17 +29,17 @@ rdb::parser::operator<<(std::ostream& os, const SqlStatement& statement)
     return os;
 }
 
-Operand::Operand(Value val, bool is_id) : val{val}, is_id{is_id}
+Operand::Operand(Value val, bool is_id) : is_id{is_id}, val{val}
 {
 }
 
-Operand::Operand(long val) : val{val}, is_id{false}
+Operand::Operand(long val) : is_id{false}, val{val}
 {
 }
 
 CreateTableStatement::CreateTableStatement(
-        std::string table_name, std::vector<ColumnDef> column_def_seq)
-    : _table_name{table_name}, _column_def_seq{column_def_seq}
+        std::string&& table_name, std::vector<ColumnDef>&& column_def_seq)
+    : _table_name{std::move(table_name)}, _column_def_seq{std::move(column_def_seq)}
 {
 }
 
@@ -75,12 +75,12 @@ void CreateTableStatement::print(std::ostream& os) const
 }
 
 InsertStatement::InsertStatement(
-        std::string table_name,
-        std::vector<std::string> column_name_seq,
-        std::vector<Value> value_seq)
-    : _table_name{table_name},
-      _column_name_seq{column_name_seq},
-      _value_seq{value_seq}
+        std::string&& table_name,
+        std::vector<std::string>&& column_name_seq,
+        std::vector<Value>&& value_seq)
+    : _table_name{std::move(table_name)},
+      _column_name_seq{std::move(column_name_seq)},
+      _value_seq{std::move(value_seq)}
 {
 }
 
@@ -121,14 +121,11 @@ void InsertStatement::print(std::ostream& os) const
 }
 
 SelectStatement::SelectStatement(
-        std::string table_name,
-        std::vector<std::string> column_name_seq,
-        Expression expression)
-    : _table_name{table_name},
-      _column_name_seq{column_name_seq},
-      _expression{expression}
+        std::string&& table_name,
+        std::vector<std::string>&& column_name_seq,
+        const Expression& expression)
+    : _table_name{std::move(table_name)}, _column_name_seq{std::move(column_name_seq)}, _has_expression_cond{expression.operation != "N"}, _expression{expression}
 {
-    _has_expression_cond = (expression.operation == "N") ? false : true;
 }
 
 std::string SelectStatement::table_name() const
@@ -155,9 +152,8 @@ Expression SelectStatement::expression() const
 {
     if (_has_expression_cond) {
         return _expression;
-    } else {
-        throw std::runtime_error("SelectStatement: No expression defined");
     }
+    throw std::runtime_error("SelectStatement: No expression defined");
 }
 
 void SelectStatement::print(std::ostream& os) const
@@ -181,10 +177,9 @@ void SelectStatement::print(std::ostream& os) const
 }
 
 DeleteFromStatement::DeleteFromStatement(
-        std::string table_name, Expression expression)
-    : _table_name{table_name}, _expression{expression}
+        std::string&& table_name, const Expression& expression)
+    : _table_name{std::move(table_name)}, _has_expression_cond{expression.operation != "N"}, _expression{expression}
 {
-    _has_expression_cond = (expression.operation == "N") ? false : true;
 }
 
 std::string DeleteFromStatement::table_name() const
@@ -201,9 +196,8 @@ Expression DeleteFromStatement::expression() const
 {
     if (_has_expression_cond) {
         return _expression;
-    } else {
-        throw std::runtime_error("DeleteFromStatement: No expression defined");
     }
+    throw std::runtime_error("DeleteFromStatement: No expression defined");
 }
 
 void DeleteFromStatement::print(std::ostream& os) const
@@ -218,8 +212,8 @@ void DeleteFromStatement::print(std::ostream& os) const
     os << "\n\t}";
 }
 
-DropTableStatement::DropTableStatement(std::string table_name)
-    : _table_name{table_name}
+DropTableStatement::DropTableStatement(std::string&& table_name)
+    : _table_name{std::move(table_name)}
 {
 }
 

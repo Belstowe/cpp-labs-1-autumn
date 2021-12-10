@@ -2,7 +2,7 @@
 #include <charconv>
 #include <stdexcept>
 
-using namespace rdb::parser;
+using rdb::parser::Parser;
 
 std::ostream&
 rdb::parser::operator<<(std::ostream& os, const rdb::parser::SqlScript& sql)

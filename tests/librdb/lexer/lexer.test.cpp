@@ -1,5 +1,5 @@
-#include "gtest/gtest.h"
 #include "librdb/lexer/Lexer.hpp"
+#include "gtest/gtest.h"
 #include <algorithm>
 #include <queue>
 #include <string>

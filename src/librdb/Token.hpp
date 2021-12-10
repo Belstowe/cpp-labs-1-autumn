@@ -45,5 +45,6 @@ struct Token {
 };
 
 std::ostream& operator<<(std::ostream& os, const rdb::parser::Token& token);
-std::ostream& operator<<(std::ostream& os, const rdb::parser::TokenType& token_type);
+std::ostream&
+operator<<(std::ostream& os, const rdb::parser::TokenType& token_type);
 } // namespace rdb::parser

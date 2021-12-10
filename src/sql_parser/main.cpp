@@ -41,8 +41,7 @@ int main(int argc, char* argv[])
 
     std::ostream* output_stream = &std::cout;
     if (*opt_o) {
-        output_file_stream.open(
-                output_file, std::ofstream::out);
+        output_file_stream.open(output_file, std::ofstream::out);
         output_stream = &output_file_stream;
     }
 
@@ -52,7 +51,7 @@ int main(int argc, char* argv[])
     parser.parse_sql(sql);
 
     *output_stream << sql._sql_script << "\n";
-    for (auto&& error: sql._errors) {
+    for (auto&& error : sql._errors) {
         std::clog << error << "\n";
     }
 

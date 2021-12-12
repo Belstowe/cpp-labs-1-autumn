@@ -45,10 +45,7 @@ int main(int argc, char* argv[])
         output_stream = &output_file_stream;
     }
 
-    rdb::parser::Lexer lexer(sql_inquiry);
-    rdb::parser::Parser parser(lexer);
-    rdb::parser::ParseResult sql;
-    parser.parse_sql(sql);
+    auto sql(rdb::parser::parse_sql(sql_inquiry));
 
     *output_stream << sql._sql_script << "\n";
     for (auto&& error : sql._errors) {

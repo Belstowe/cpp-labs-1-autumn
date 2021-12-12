@@ -32,8 +32,8 @@ std::string Parser::parse_token(TokenType&& expected_token)
 }
 
 template <typename T>
-rdb::parser::Value Parser::convert_lexeme_to_var(
-        Token& token, TokenType&& token_type)
+rdb::parser::Value
+Parser::convert_lexeme_to_var(Token& token, TokenType&& token_type)
 {
     T result{};
     auto [ptr, ec]{std::from_chars(

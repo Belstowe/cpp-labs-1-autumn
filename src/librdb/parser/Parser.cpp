@@ -18,18 +18,17 @@ Parser::Parser(Lexer& lexer) : _lexer{lexer}
 {
 }
 
-void Parser::parse_token(const TokenType expected_token, std::string* value)
+std::string Parser::parse_token(TokenType&& expected_token)
 {
     Token token = _lexer.get();
     if (token.type != expected_token) {
         if (token.type == TokenType::EndOfFile) {
             throw Error(token, ErrorType::UnexpectedEOF, expected_token);
         }
-        throw(Error(token, ErrorType::SyntaxError, expected_token));
+        throw Error(token, ErrorType::SyntaxError, expected_token);
     }
-    if (value != nullptr) {
-        *value = token.lexeme;
-    }
+
+    return std::string(token.lexeme);
 }
 
 template <typename T>
@@ -95,7 +94,7 @@ void Parser::parse_operand(Operand& operand)
 
 void Parser::parse_column_def(std::vector<ColumnDef>& column_def_seq)
 {
-    parse_token(TokenType::ParenthesisOpening, nullptr);
+    parse_token(TokenType::ParenthesisOpening);
     ColumnDef column_def;
     std::vector<Token> token_seq;
     Token token;
@@ -147,24 +146,24 @@ void Parser::parse_column_list(std::vector<std::string>& column_name_seq)
 {
     do {
         std::string column_name;
-        parse_token(TokenType::VarId, &column_name);
+        column_name = parse_token(TokenType::VarId);
         column_name_seq.push_back(column_name);
     } while (_lexer.peek().type == TokenType::VarId);
 }
 
 void Parser::parse_argument_table(std::string& table_name)
 {
-    parse_token(TokenType::KwTable, nullptr);
-    parse_token(TokenType::VarId, &table_name);
+    parse_token(TokenType::KwTable);
+    table_name = parse_token(TokenType::VarId);
 }
 
 void Parser::parse_argument_into(
         std::string& table_name, std::vector<std::string>& column_name_seq)
 {
-    parse_token(TokenType::KwInto, nullptr);
-    parse_token(TokenType::VarId, &table_name);
+    parse_token(TokenType::KwInto);
+    table_name = parse_token(TokenType::VarId);
 
-    parse_token(TokenType::ParenthesisOpening, nullptr);
+    parse_token(TokenType::ParenthesisOpening);
     std::vector<Token> token_seq;
     Token token;
     bool catched_error = false;
@@ -201,8 +200,8 @@ void Parser::parse_argument_into(
 
 void Parser::parse_argument_values(std::vector<Value>& value_seq)
 {
-    parse_token(TokenType::KwValues, nullptr);
-    parse_token(TokenType::ParenthesisOpening, nullptr);
+    parse_token(TokenType::KwValues);
+    parse_token(TokenType::ParenthesisOpening);
     std::vector<Token> token_seq;
     Token token;
     bool catched_error = false;
@@ -255,17 +254,17 @@ void Parser::parse_argument_values(std::vector<Value>& value_seq)
 
 void Parser::parse_argument_where(Expression& expression)
 {
-    parse_token(TokenType::KwWhere, nullptr);
+    parse_token(TokenType::KwWhere);
     parse_operand(expression.loperand);
-    parse_token(TokenType::Operation, &expression.operation);
+    expression.operation = parse_token(TokenType::Operation);
     parse_operand(expression.roperand);
 }
 
 void Parser::parse_argument_from(
         std::string& table_name, Expression& expression)
 {
-    parse_token(TokenType::KwFrom, nullptr);
-    parse_token(TokenType::VarId, &table_name);
+    parse_token(TokenType::KwFrom);
+    table_name = parse_token(TokenType::VarId);
 
     if (_lexer.peek().type == TokenType::KwWhere) {
         parse_argument_where(expression);
@@ -277,10 +276,10 @@ void Parser::parse_statement_create()
     std::string table_name;
     std::vector<ColumnDef> column_def_seq;
 
-    parse_token(TokenType::KwCreate, nullptr);
+    parse_token(TokenType::KwCreate);
     parse_argument_table(table_name);
     parse_column_def(column_def_seq);
-    parse_token(TokenType::Semicolon, nullptr);
+    parse_token(TokenType::Semicolon);
 
     std::unique_ptr<CreateTableStatement> create_table_statement
             = std::make_unique<CreateTableStatement>(
@@ -295,10 +294,10 @@ void Parser::parse_statement_insert()
     std::vector<std::string> column_name_seq;
     std::vector<Value> value_seq;
 
-    parse_token(TokenType::KwInsert, nullptr);
+    parse_token(TokenType::KwInsert);
     parse_argument_into(table_name, column_name_seq);
     parse_argument_values(value_seq);
-    parse_token(TokenType::Semicolon, nullptr);
+    parse_token(TokenType::Semicolon);
 
     std::unique_ptr<InsertStatement> insert_statement
             = std::make_unique<InsertStatement>(
@@ -315,10 +314,10 @@ void Parser::parse_statement_select()
     std::string table_name;
     Expression expression{0, "N", 0};
 
-    parse_token(TokenType::KwSelect, nullptr);
+    parse_token(TokenType::KwSelect);
     parse_column_list(column_name_seq);
     parse_argument_from(table_name, expression);
-    parse_token(TokenType::Semicolon, nullptr);
+    parse_token(TokenType::Semicolon);
 
     std::unique_ptr<SelectStatement> select_statement
             = std::make_unique<SelectStatement>(
@@ -334,9 +333,9 @@ void Parser::parse_statement_delete()
     std::string table_name;
     Expression expression{0, "N", 0};
 
-    parse_token(TokenType::KwDelete, nullptr);
+    parse_token(TokenType::KwDelete);
     parse_argument_from(table_name, expression);
-    parse_token(TokenType::Semicolon, nullptr);
+    parse_token(TokenType::Semicolon);
 
     std::unique_ptr<DeleteFromStatement> delete_statement
             = std::make_unique<DeleteFromStatement>(
@@ -349,9 +348,9 @@ void Parser::parse_statement_drop()
 {
     std::string table_name;
 
-    parse_token(TokenType::KwDrop, nullptr);
+    parse_token(TokenType::KwDrop);
     parse_argument_table(table_name);
-    parse_token(TokenType::Semicolon, nullptr);
+    parse_token(TokenType::Semicolon);
 
     std::unique_ptr<DropTableStatement> drop_statement
             = std::make_unique<DropTableStatement>(std::move(table_name));

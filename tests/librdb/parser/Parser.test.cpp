@@ -1,5 +1,5 @@
-#include "librdb/lexer/Lexer.hpp"
 #include "librdb/parser/Parser.hpp"
+#include "librdb/lexer/Lexer.hpp"
 #include "gtest/gtest.h"
 #include <string>
 #include <string_view>
@@ -9,7 +9,6 @@ using rdb::parser::ColumnDef;
 using rdb::parser::ErrorType;
 using rdb::parser::Expression;
 using rdb::parser::Lexer;
-using rdb::parser::Parser;
 using rdb::parser::ParseResult;
 using rdb::parser::SqlStatement;
 using rdb::parser::TokenType;
@@ -19,10 +18,7 @@ TEST(ParserTest, CreateStatementExtraction)
 {
     std::string instring(
             "CREATE TABLE users (name TEXT, age INT, meters REAL);");
-    Lexer lexer(instring);
-    Parser parser(lexer);
-    ParseResult sql;
-    parser.parse_sql(sql);
+    auto sql(rdb::parser::parse_sql(instring));
 
     ASSERT_EQ(sql._errors.size(), 0);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 1);
@@ -53,10 +49,7 @@ TEST(ParserTest, InsertStatementExtraction)
     std::string instring(
             "INSERT INTO users (name, age, meters) VALUES (\"James\", 29, "
             "1.8);");
-    Lexer lexer(instring);
-    Parser parser(lexer);
-    ParseResult sql;
-    parser.parse_sql(sql);
+    auto sql(rdb::parser::parse_sql(instring));
 
     ASSERT_EQ(sql._errors.size(), 0);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 1);
@@ -86,10 +79,7 @@ TEST(ParserTest, SelectStatementExtraction)
     std::string instring(
             "SELECT name age FROM users WHERE age >= 22; SELECT meters FROM "
             "users;");
-    Lexer lexer(instring);
-    Parser parser(lexer);
-    ParseResult sql;
-    parser.parse_sql(sql);
+    auto sql(rdb::parser::parse_sql(instring));
 
     ASSERT_EQ(sql._errors.size(), 0);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 2);
@@ -133,10 +123,7 @@ TEST(ParserTest, DeleteStatementExtraction)
 {
     std::string instring(
             "DELETE FROM companies; DELETE FROM users WHERE name = \"James\";");
-    Lexer lexer(instring);
-    Parser parser(lexer);
-    ParseResult sql;
-    parser.parse_sql(sql);
+    auto sql(rdb::parser::parse_sql(instring));
 
     ASSERT_EQ(sql._errors.size(), 0);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 2);
@@ -171,10 +158,7 @@ TEST(ParserTest, DeleteStatementExtraction)
 TEST(ParserTest, DropStatementExtraction)
 {
     std::string instring("DROP TABLE users;");
-    Lexer lexer(instring);
-    Parser parser(lexer);
-    ParseResult sql;
-    parser.parse_sql(sql);
+    auto sql(rdb::parser::parse_sql(instring));
 
     ASSERT_EQ(sql._errors.size(), 0);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 1);
@@ -195,10 +179,7 @@ TEST(ParserTest, LawfulInput)
             "CREATE TABLE users (name TEXT, age INT, meters REAL);\nINsert "
             "into users (name, age, meters) values (\"Johnny\", 22, "
             "1.68);\nDROP TABLE users;");
-    Lexer lexer(instring);
-    Parser parser(lexer);
-    ParseResult sql;
-    parser.parse_sql(sql);
+    auto sql(rdb::parser::parse_sql(instring));
 
     ASSERT_EQ(sql._errors.size(), 0);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 3);
@@ -223,10 +204,7 @@ TEST(ParserTest, PartlyChaoticInput)
             "CREATE table animals;\ninsert into animals (kind, family) VALUES "
             "(\"Rabbit\",\"Mammals\"); insert values "
             "(\"Snake\",\"Reptiles\");\ndrop animals;");
-    Lexer lexer(instring);
-    Parser parser(lexer);
-    ParseResult sql;
-    parser.parse_sql(sql);
+    auto sql(rdb::parser::parse_sql(instring));
 
     ASSERT_EQ(sql._errors.size(), 3);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 1);
@@ -242,10 +220,7 @@ TEST(ParserTest, Misprints)
     std::string instring(
             "CREAET TABLE users (name TEXT, age INT, meters REAL); DROP TABL "
             "users");
-    Lexer lexer(instring);
-    Parser parser(lexer);
-    ParseResult sql;
-    parser.parse_sql(sql);
+    auto sql(rdb::parser::parse_sql(instring));
 
     ASSERT_EQ(sql._errors.size(), 3);
     ASSERT_EQ(sql._sql_script._sql_statements.size(), 0);

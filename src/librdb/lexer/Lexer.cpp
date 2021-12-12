@@ -1,5 +1,6 @@
 #include "Lexer.hpp"
 #include <algorithm>
+#include <array>
 #include <cctype>
 #include <regex>
 
@@ -14,23 +15,23 @@ struct TokenRule {
 };
 
 // clang-format off
-const std::vector<TokenRule> TokenRules = {
+const std::array<TokenRule, 24> TokenRules{ {
+        {TokenType::KwCreate,            std::regex("CREATE(?=\\s|$|\\(|\\)|;|,)", std::regex_constants::icase)},
+        {TokenType::KwInsert,            std::regex("INSERT(?=\\s|$|\\(|\\)|;|,)", std::regex_constants::icase)},
+        {TokenType::KwDelete,            std::regex("DELETE(?=\\s|$|\\(|\\)|;|,)", std::regex_constants::icase)},
+        {TokenType::KwDrop,              std::regex("DROP(?=\\s|$|\\(|\\)|;|,)", std::regex_constants::icase)},
+        {TokenType::KwFrom,              std::regex("FROM(?=\\s|$|\\(|\\)|;|,)", std::regex_constants::icase)},
+        {TokenType::KwInto,              std::regex("INTO(?=\\s|$|\\(|\\)|;|,)", std::regex_constants::icase)},
+        {TokenType::KwInt,               std::regex("INT(?=\\s|$|\\(|\\)|;|,)", std::regex_constants::icase)},
+        {TokenType::KwReal,              std::regex("REAL(?=\\s|$|\\(|\\)|;|,)", std::regex_constants::icase)},
+        {TokenType::KwSelect,            std::regex("SELECT(?=\\s|$|\\(|\\)|;|,)", std::regex_constants::icase)},
+        {TokenType::KwTable,             std::regex("TABLE(?=\\s|$|\\(|\\)|;|,)", std::regex_constants::icase)},
+        {TokenType::KwText,              std::regex("TEXT(?=\\s|$|\\(|\\)|;|,)", std::regex_constants::icase)},
+        {TokenType::KwValues,            std::regex("VALUES(?=\\s|$|\\(|\\)|;|,)", std::regex_constants::icase)},
+        {TokenType::KwWhere,             std::regex("WHERE(?=\\s|$|\\(|\\)|;|,)", std::regex_constants::icase)},
         {TokenType::VarText,             std::regex("\".*?\"", std::regex_constants::icase)},
         {TokenType::VarReal,             std::regex("[-+]?0\\.[0-9]+|[1-9][0-9]*\\.[0-9]+", std::regex_constants::icase)},
         {TokenType::VarInt,              std::regex("[-+]?0|[-+]?[1-9][0-9]*", std::regex_constants::icase)},
-        {TokenType::KwCreate,            std::regex("CREATE", std::regex_constants::icase)},
-        {TokenType::KwInsert,            std::regex("INSERT", std::regex_constants::icase)},
-        {TokenType::KwDelete,            std::regex("DELETE", std::regex_constants::icase)},
-        {TokenType::KwDrop,              std::regex("DROP", std::regex_constants::icase)},
-        {TokenType::KwFrom,              std::regex("FROM", std::regex_constants::icase)},
-        {TokenType::KwInto,              std::regex("INTO", std::regex_constants::icase)},
-        {TokenType::KwInt,               std::regex("INT", std::regex_constants::icase)},
-        {TokenType::KwReal,              std::regex("REAL", std::regex_constants::icase)},
-        {TokenType::KwSelect,            std::regex("SELECT", std::regex_constants::icase)},
-        {TokenType::KwTable,             std::regex("TABLE", std::regex_constants::icase)},
-        {TokenType::KwText,              std::regex("TEXT", std::regex_constants::icase)},
-        {TokenType::KwValues,            std::regex("VALUES", std::regex_constants::icase)},
-        {TokenType::KwWhere,             std::regex("WHERE", std::regex_constants::icase)},
         {TokenType::VarId,               std::regex("[a-z][a-z0-9]*", std::regex_constants::icase)},
         {TokenType::Operation,           std::regex(">=|<=|!=|=|<|>", std::regex_constants::icase)},
         {TokenType::ParenthesisOpening,  std::regex("\\(", std::regex_constants::icase)},
@@ -39,7 +40,7 @@ const std::vector<TokenRule> TokenRules = {
         {TokenType::CurlyBracketClosing, std::regex("\\}", std::regex_constants::icase)},
         {TokenType::Semicolon,           std::regex(";", std::regex_constants::icase)},
         {TokenType::Comma,               std::regex(",", std::regex_constants::icase)}
-};
+} };
 // clang-format on
 } // namespace
 

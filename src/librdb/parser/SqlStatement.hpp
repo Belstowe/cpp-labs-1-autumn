@@ -50,8 +50,8 @@ public:
     ~CreateTableStatement() = default;
     CreateTableStatement(std::string&&, std::vector<ColumnDef>&&);
     void print(std::ostream& os) const;
-    std::string table_name() const;
-    ColumnDef column_def(size_t index) const;
+    const std::string& table_name() const;
+    const ColumnDef& column_def(size_t index) const;
     size_t columns_defined() const;
 };
 
@@ -66,10 +66,10 @@ public:
     InsertStatement(
             std::string&&, std::vector<std::string>&&, std::vector<Value>&&);
     void print(std::ostream& os) const;
-    std::string table_name() const;
-    std::string column_name(size_t index) const;
+    const std::string& table_name() const;
+    const std::string& column_name(size_t index) const;
     size_t columns_defined() const;
-    Value value(size_t index) const;
+    const Value& value(size_t index) const;
 };
 
 class SelectStatement : public SqlStatement {
@@ -86,11 +86,11 @@ public:
             std::vector<std::string>&&,
             const Expression& = Expression{0, "N", 0});
     void print(std::ostream& os) const;
-    std::string table_name() const;
-    std::string column_name(size_t index) const;
+    const std::string& table_name() const;
+    const std::string& column_name(size_t index) const;
     size_t columns_defined() const;
     bool has_expression() const;
-    Expression expression() const;
+    const Expression& expression() const;
 };
 
 class DeleteFromStatement : public SqlStatement {
@@ -104,9 +104,9 @@ public:
     DeleteFromStatement(
             std::string&&, const Expression& = Expression{0, "N", 0});
     void print(std::ostream& os) const;
-    std::string table_name() const;
+    const std::string& table_name() const;
     bool has_expression() const;
-    Expression expression() const;
+    const Expression& expression() const;
 };
 
 class DropTableStatement : public SqlStatement {
@@ -117,6 +117,6 @@ public:
     ~DropTableStatement() = default;
     DropTableStatement(std::string&&);
     void print(std::ostream& os) const;
-    std::string table_name() const;
+    const std::string& table_name() const;
 };
 } // namespace rdb::parser

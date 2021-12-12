@@ -44,12 +44,12 @@ rdb::parser::CreateTableStatement::CreateTableStatement(
 {
 }
 
-std::string rdb::parser::CreateTableStatement::table_name() const
+const std::string& rdb::parser::CreateTableStatement::table_name() const
 {
     return _table_name;
 }
 
-rdb::parser::ColumnDef
+const rdb::parser::ColumnDef&
 rdb::parser::CreateTableStatement::column_def(size_t index) const
 {
     return _column_def_seq.at(index);
@@ -86,12 +86,12 @@ rdb::parser::InsertStatement::InsertStatement(
 {
 }
 
-std::string rdb::parser::InsertStatement::table_name() const
+const std::string& rdb::parser::InsertStatement::table_name() const
 {
     return _table_name;
 }
 
-std::string rdb::parser::InsertStatement::column_name(size_t index) const
+const std::string& rdb::parser::InsertStatement::column_name(size_t index) const
 {
     return _column_name_seq.at(index);
 }
@@ -101,7 +101,8 @@ size_t rdb::parser::InsertStatement::columns_defined() const
     return _column_name_seq.size();
 }
 
-rdb::parser::Value rdb::parser::InsertStatement::value(size_t index) const
+const rdb::parser::Value&
+rdb::parser::InsertStatement::value(size_t index) const
 {
     return _value_seq.at(index);
 }
@@ -133,12 +134,12 @@ rdb::parser::SelectStatement::SelectStatement(
 {
 }
 
-std::string rdb::parser::SelectStatement::table_name() const
+const std::string& rdb::parser::SelectStatement::table_name() const
 {
     return _table_name;
 }
 
-std::string rdb::parser::SelectStatement::column_name(size_t index) const
+const std::string& rdb::parser::SelectStatement::column_name(size_t index) const
 {
     return _column_name_seq.at(index);
 }
@@ -153,7 +154,7 @@ bool rdb::parser::SelectStatement::has_expression() const
     return _has_expression_cond;
 }
 
-rdb::parser::Expression rdb::parser::SelectStatement::expression() const
+const rdb::parser::Expression& rdb::parser::SelectStatement::expression() const
 {
     if (_has_expression_cond) {
         return _expression;
@@ -189,7 +190,7 @@ rdb::parser::DeleteFromStatement::DeleteFromStatement(
 {
 }
 
-std::string rdb::parser::DeleteFromStatement::table_name() const
+const std::string& rdb::parser::DeleteFromStatement::table_name() const
 {
     return _table_name;
 }
@@ -199,7 +200,8 @@ bool rdb::parser::DeleteFromStatement::has_expression() const
     return _has_expression_cond;
 }
 
-rdb::parser::Expression rdb::parser::DeleteFromStatement::expression() const
+const rdb::parser::Expression&
+rdb::parser::DeleteFromStatement::expression() const
 {
     if (_has_expression_cond) {
         return _expression;
@@ -224,7 +226,7 @@ rdb::parser::DropTableStatement::DropTableStatement(std::string&& table_name)
 {
 }
 
-std::string rdb::parser::DropTableStatement::table_name() const
+const std::string& rdb::parser::DropTableStatement::table_name() const
 {
     return _table_name;
 }

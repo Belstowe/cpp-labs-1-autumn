@@ -32,28 +32,28 @@ std::string Parser::parse_token(TokenType&& expected_token)
 }
 
 template <typename T>
-void Parser::convert_lexeme_to_var(
-        Token& token, Value& value, const TokenType& token_type)
+rdb::parser::Value Parser::convert_lexeme_to_var(
+        Token& token, TokenType&& token_type)
 {
     T result{};
     auto [ptr, ec]{std::from_chars(
             token.lexeme.data(),
             token.lexeme.data() + token.lexeme.size(),
             result)};
-    if (ec == std::errc()) {
-        value = result;
-    } else if (ec == std::errc::result_out_of_range) {
+    if (ec == std::errc::result_out_of_range) {
         throw Error(token, ErrorType::VarOutOfRange, token_type);
-    } else {
+    } else if (ec == std::errc::invalid_argument) {
         throw Error(token, ErrorType::IncorrectVarType, token_type);
     }
+
+    return result;
 }
 
-void Parser::convert_lexeme_to_double(Token& token, Value& value)
+rdb::parser::Value Parser::convert_lexeme_to_double(Token& token)
 {
     try {
         std::string str(token.lexeme);
-        value = std::stod(str);
+        return std::stod(str);
     } catch (const std::invalid_argument&) {
         throw Error(token, ErrorType::IncorrectVarType, TokenType::KwReal);
     } catch (const std::out_of_range&) {
@@ -68,11 +68,11 @@ void Parser::parse_operand(Operand& operand)
 
     switch (token.type) {
     case TokenType::VarInt:
-        convert_lexeme_to_var<long>(token, operand.val, token.type);
+        operand.val = convert_lexeme_to_var<long>(token, TokenType::VarInt);
         break;
 
     case TokenType::VarReal:
-        convert_lexeme_to_double(token, operand.val);
+        operand.val = convert_lexeme_to_double(token);
         break;
 
     case TokenType::VarId:
@@ -217,13 +217,13 @@ void Parser::parse_argument_values(std::vector<Value>& value_seq)
             Value value;
             switch (token_seq[0].type) {
             case TokenType::VarInt:
-                convert_lexeme_to_var<long>(
-                        token_seq[0], value, token_seq[0].type);
+                value = convert_lexeme_to_var<long>(
+                        token_seq[0], TokenType::VarInt);
                 value_seq.push_back(value);
                 break;
 
             case TokenType::VarReal:
-                convert_lexeme_to_double(token_seq[0], value);
+                value = convert_lexeme_to_double(token_seq[0]);
                 value_seq.push_back(value);
                 break;
 

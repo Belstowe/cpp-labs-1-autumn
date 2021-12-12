@@ -31,9 +31,9 @@ private:
     ParseResult _sql;
 
     template <typename T>
-    static void convert_lexeme_to_var(
-            Token& token, Value& value, const TokenType& token_type);
-    static void convert_lexeme_to_double(Token& token, Value& value);
+    static rdb::parser::Value convert_lexeme_to_var(
+        Token& token, TokenType&& token_type);
+    static rdb::parser::Value convert_lexeme_to_double(Token& token);
 
     std::string Parser::parse_token(TokenType&& expected_token);
     void parse_operand(Operand& operand);

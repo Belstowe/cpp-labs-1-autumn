@@ -43,7 +43,8 @@ rdb::parser::Value convert_lexeme_to_var(Token& token, TokenType&& token_type)
             result)};
     if (ec == std::errc::result_out_of_range) {
         throw Error(token, ErrorType::VarOutOfRange, token_type);
-    } else if (ec == std::errc::invalid_argument) {
+    }
+    if (ec == std::errc::invalid_argument) {
         throw Error(token, ErrorType::IncorrectVarType, token_type);
     }
 

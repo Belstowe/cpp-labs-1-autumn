@@ -20,16 +20,16 @@ TEST(ParserTest, CreateStatementExtraction)
             "CREATE TABLE users (name TEXT, age INT, meters REAL);");
     auto sql(rdb::parser::parse_sql(instring));
 
-    ASSERT_EQ(sql._errors.size(), 0);
-    ASSERT_EQ(sql._sql_script._sql_statements.size(), 1);
+    ASSERT_EQ(sql.errors.size(), 0);
+    ASSERT_EQ(sql.sql_script.sql_statements.size(), 1);
     ASSERT_EQ(
             typeid(dynamic_cast<rdb::parser::CreateTableStatement*>(
-                    sql._sql_script._sql_statements[0].get())),
+                    sql.sql_script.sql_statements[0].get())),
             typeid(rdb::parser::CreateTableStatement*));
 
     rdb::parser::CreateTableStatement statement
             = dynamic_cast<rdb::parser::CreateTableStatement&>(
-                    *sql._sql_script._sql_statements[0]);
+                    *sql.sql_script.sql_statements[0]);
     ASSERT_EQ(statement.table_name(), "users");
     ASSERT_EQ(statement.columns_defined(), 3);
 
@@ -51,16 +51,16 @@ TEST(ParserTest, InsertStatementExtraction)
             "1.8);");
     auto sql(rdb::parser::parse_sql(instring));
 
-    ASSERT_EQ(sql._errors.size(), 0);
-    ASSERT_EQ(sql._sql_script._sql_statements.size(), 1);
+    ASSERT_EQ(sql.errors.size(), 0);
+    ASSERT_EQ(sql.sql_script.sql_statements.size(), 1);
     ASSERT_EQ(
             typeid(dynamic_cast<rdb::parser::InsertStatement*>(
-                    sql._sql_script._sql_statements[0].get())),
+                    sql.sql_script.sql_statements[0].get())),
             typeid(rdb::parser::InsertStatement*));
 
     rdb::parser::InsertStatement statement
             = dynamic_cast<rdb::parser::InsertStatement&>(
-                    *sql._sql_script._sql_statements[0]);
+                    *sql.sql_script.sql_statements[0]);
     ASSERT_EQ(statement.table_name(), "users");
     ASSERT_EQ(statement.columns_defined(), 3);
 
@@ -81,23 +81,23 @@ TEST(ParserTest, SelectStatementExtraction)
             "users;");
     auto sql(rdb::parser::parse_sql(instring));
 
-    ASSERT_EQ(sql._errors.size(), 0);
-    ASSERT_EQ(sql._sql_script._sql_statements.size(), 2);
+    ASSERT_EQ(sql.errors.size(), 0);
+    ASSERT_EQ(sql.sql_script.sql_statements.size(), 2);
     ASSERT_EQ(
             typeid(dynamic_cast<rdb::parser::SelectStatement*>(
-                    sql._sql_script._sql_statements[0].get())),
+                    sql.sql_script.sql_statements[0].get())),
             typeid(rdb::parser::SelectStatement*));
     ASSERT_EQ(
             typeid(dynamic_cast<rdb::parser::SelectStatement*>(
-                    sql._sql_script._sql_statements[1].get())),
+                    sql.sql_script.sql_statements[1].get())),
             typeid(rdb::parser::SelectStatement*));
 
     rdb::parser::SelectStatement statement_expr
             = dynamic_cast<rdb::parser::SelectStatement&>(
-                    *sql._sql_script._sql_statements[0]);
+                    *sql.sql_script.sql_statements[0]);
     rdb::parser::SelectStatement statement_no_expr
             = dynamic_cast<rdb::parser::SelectStatement&>(
-                    *sql._sql_script._sql_statements[1]);
+                    *sql.sql_script.sql_statements[1]);
     ASSERT_EQ(statement_expr.table_name(), "users");
     ASSERT_EQ(statement_no_expr.table_name(), "users");
     ASSERT_EQ(statement_expr.columns_defined(), 2);
@@ -125,23 +125,23 @@ TEST(ParserTest, DeleteStatementExtraction)
             "DELETE FROM companies; DELETE FROM users WHERE name = \"James\";");
     auto sql(rdb::parser::parse_sql(instring));
 
-    ASSERT_EQ(sql._errors.size(), 0);
-    ASSERT_EQ(sql._sql_script._sql_statements.size(), 2);
+    ASSERT_EQ(sql.errors.size(), 0);
+    ASSERT_EQ(sql.sql_script.sql_statements.size(), 2);
     ASSERT_EQ(
             typeid(dynamic_cast<rdb::parser::DeleteFromStatement*>(
-                    sql._sql_script._sql_statements[0].get())),
+                    sql.sql_script.sql_statements[0].get())),
             typeid(rdb::parser::DeleteFromStatement*));
     ASSERT_EQ(
             typeid(dynamic_cast<rdb::parser::DeleteFromStatement*>(
-                    sql._sql_script._sql_statements[1].get())),
+                    sql.sql_script.sql_statements[1].get())),
             typeid(rdb::parser::DeleteFromStatement*));
 
     rdb::parser::DeleteFromStatement statement_no_expr
             = dynamic_cast<rdb::parser::DeleteFromStatement&>(
-                    *sql._sql_script._sql_statements[0]);
+                    *sql.sql_script.sql_statements[0]);
     rdb::parser::DeleteFromStatement statement_expr
             = dynamic_cast<rdb::parser::DeleteFromStatement&>(
-                    *sql._sql_script._sql_statements[1]);
+                    *sql.sql_script.sql_statements[1]);
     ASSERT_EQ(statement_no_expr.table_name(), "companies");
     ASSERT_EQ(statement_expr.table_name(), "users");
 
@@ -160,16 +160,16 @@ TEST(ParserTest, DropStatementExtraction)
     std::string instring("DROP TABLE users;");
     auto sql(rdb::parser::parse_sql(instring));
 
-    ASSERT_EQ(sql._errors.size(), 0);
-    ASSERT_EQ(sql._sql_script._sql_statements.size(), 1);
+    ASSERT_EQ(sql.errors.size(), 0);
+    ASSERT_EQ(sql.sql_script.sql_statements.size(), 1);
     ASSERT_EQ(
             typeid(dynamic_cast<rdb::parser::DropTableStatement*>(
-                    sql._sql_script._sql_statements[0].get())),
+                    sql.sql_script.sql_statements[0].get())),
             typeid(rdb::parser::DropTableStatement*));
 
     rdb::parser::DropTableStatement statement
             = dynamic_cast<rdb::parser::DropTableStatement&>(
-                    *sql._sql_script._sql_statements[0]);
+                    *sql.sql_script.sql_statements[0]);
     ASSERT_EQ(statement.table_name(), "users");
 }
 
@@ -181,20 +181,20 @@ TEST(ParserTest, LawfulInput)
             "1.68);\nDROP TABLE users;");
     auto sql(rdb::parser::parse_sql(instring));
 
-    ASSERT_EQ(sql._errors.size(), 0);
-    ASSERT_EQ(sql._sql_script._sql_statements.size(), 3);
+    ASSERT_EQ(sql.errors.size(), 0);
+    ASSERT_EQ(sql.sql_script.sql_statements.size(), 3);
 
     ASSERT_EQ(
             typeid(dynamic_cast<rdb::parser::CreateTableStatement*>(
-                    sql._sql_script._sql_statements[0].get())),
+                    sql.sql_script.sql_statements[0].get())),
             typeid(rdb::parser::CreateTableStatement*));
     ASSERT_EQ(
             typeid(dynamic_cast<rdb::parser::InsertStatement*>(
-                    sql._sql_script._sql_statements[1].get())),
+                    sql.sql_script.sql_statements[1].get())),
             typeid(rdb::parser::InsertStatement*));
     ASSERT_EQ(
             typeid(dynamic_cast<rdb::parser::DropTableStatement*>(
-                    sql._sql_script._sql_statements[2].get())),
+                    sql.sql_script.sql_statements[2].get())),
             typeid(rdb::parser::DropTableStatement*));
 }
 
@@ -206,12 +206,12 @@ TEST(ParserTest, PartlyChaoticInput)
             "(\"Snake\",\"Reptiles\");\ndrop animals;");
     auto sql(rdb::parser::parse_sql(instring));
 
-    ASSERT_EQ(sql._errors.size(), 3);
-    ASSERT_EQ(sql._sql_script._sql_statements.size(), 1);
+    ASSERT_EQ(sql.errors.size(), 3);
+    ASSERT_EQ(sql.sql_script.sql_statements.size(), 1);
 
     ASSERT_EQ(
             typeid(dynamic_cast<rdb::parser::InsertStatement*>(
-                    sql._sql_script._sql_statements[0].get())),
+                    sql.sql_script.sql_statements[0].get())),
             typeid(rdb::parser::InsertStatement*));
 }
 
@@ -222,10 +222,10 @@ TEST(ParserTest, Misprints)
             "users");
     auto sql(rdb::parser::parse_sql(instring));
 
-    ASSERT_EQ(sql._errors.size(), 3);
-    ASSERT_EQ(sql._sql_script._sql_statements.size(), 0);
+    ASSERT_EQ(sql.errors.size(), 3);
+    ASSERT_EQ(sql.sql_script.sql_statements.size(), 0);
 
-    ASSERT_EQ(sql._errors.at(0).type(), ErrorType::NotStatement);
-    ASSERT_EQ(sql._errors.at(1).type(), ErrorType::SyntaxError);
-    ASSERT_EQ(sql._errors.at(2).type(), ErrorType::UnexpectedEOF);
+    ASSERT_EQ(sql.errors.at(0).type(), ErrorType::NotStatement);
+    ASSERT_EQ(sql.errors.at(1).type(), ErrorType::SyntaxError);
+    ASSERT_EQ(sql.errors.at(2).type(), ErrorType::UnexpectedEOF);
 }

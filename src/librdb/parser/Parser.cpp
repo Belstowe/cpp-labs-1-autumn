@@ -13,7 +13,7 @@ using rdb::parser::TokenType;
 std::ostream&
 rdb::parser::operator<<(std::ostream& os, const rdb::parser::SqlScript& sql)
 {
-    for (auto&& statement_ptr : sql._sql_statements) {
+    for (auto&& statement_ptr : sql.sql_statements) {
         auto* statement = statement_ptr.get();
         os << *statement << "\n";
     }
@@ -356,27 +356,27 @@ ParseResult rdb::parser::parse_sql(std::string_view sql_inquiry)
             try {
                 switch (token.type) {
                 case TokenType::KwCreate:
-                    sql._sql_script._sql_statements.emplace_back(
+                    sql.sql_script.sql_statements.emplace_back(
                             parse_statement_create(lexer));
                     break;
 
                 case TokenType::KwDelete:
-                    sql._sql_script._sql_statements.emplace_back(
+                    sql.sql_script.sql_statements.emplace_back(
                             parse_statement_delete(lexer));
                     break;
 
                 case TokenType::KwInsert:
-                    sql._sql_script._sql_statements.emplace_back(
+                    sql.sql_script.sql_statements.emplace_back(
                             parse_statement_insert(lexer));
                     break;
 
                 case TokenType::KwSelect:
-                    sql._sql_script._sql_statements.emplace_back(
+                    sql.sql_script.sql_statements.emplace_back(
                             parse_statement_select(lexer));
                     break;
 
                 case TokenType::KwDrop:
-                    sql._sql_script._sql_statements.emplace_back(
+                    sql.sql_script.sql_statements.emplace_back(
                             parse_statement_drop(lexer));
                     break;
 
@@ -389,7 +389,7 @@ ParseResult rdb::parser::parse_sql(std::string_view sql_inquiry)
                     throw error;
 
                 default:
-                    sql._errors.push_back(error);
+                    sql.errors.push_back(error);
                     if (error.token_type() != TokenType::Semicolon) {
                         do {
                             token = lexer.get();
@@ -405,7 +405,7 @@ ParseResult rdb::parser::parse_sql(std::string_view sql_inquiry)
             token = lexer.peek();
         }
     } catch (const Error& error) {
-        sql._errors.push_back(error);
+        sql.errors.push_back(error);
     }
 
     return sql;

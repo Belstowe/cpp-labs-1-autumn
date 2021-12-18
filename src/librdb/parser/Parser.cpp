@@ -20,7 +20,7 @@ rdb::parser::operator<<(std::ostream& os, const rdb::parser::SqlScript& sql)
     return os;
 }
 
-std::string parse_token(Lexer& lexer, TokenType&& expected_token)
+std::string parse_token(Lexer& lexer, const TokenType& expected_token)
 {
     Token token = lexer.get();
     if (token.type != expected_token) {
@@ -34,7 +34,7 @@ std::string parse_token(Lexer& lexer, TokenType&& expected_token)
 }
 
 template <typename T>
-rdb::parser::Value convert_lexeme_to_var(Token& token, TokenType&& token_type)
+rdb::parser::Value convert_lexeme_to_var(Token& token, const TokenType& token_type)
 {
     T result{};
     auto [ptr, ec]{std::from_chars(

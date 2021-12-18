@@ -7,9 +7,11 @@
 #include <memory>
 
 namespace rdb::parser {
+using SqlStatementPtr = std::unique_ptr<SqlStatement>;
+
 struct SqlScript {
     explicit SqlScript() = default;
-    std::vector<std::unique_ptr<SqlStatement>> sql_statements;
+    std::vector<SqlStatementPtr> sql_statements;
 };
 
 std::ostream& operator<<(std::ostream& os, const rdb::parser::SqlScript& sql);

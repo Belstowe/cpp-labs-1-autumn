@@ -20,6 +20,7 @@ rdb::parser::operator<<(std::ostream& os, const rdb::parser::SqlScript& sql)
     return os;
 }
 
+namespace {
 std::string parse_token(Lexer& lexer, const TokenType& expected_token)
 {
     Token token = lexer.get();
@@ -34,7 +35,8 @@ std::string parse_token(Lexer& lexer, const TokenType& expected_token)
 }
 
 template <typename T>
-rdb::parser::Value convert_lexeme_to_var(Token& token, const TokenType& token_type)
+rdb::parser::Value
+convert_lexeme_to_var(Token& token, const TokenType& token_type)
 {
     T result{};
     auto [ptr, ec]{std::from_chars(
@@ -343,6 +345,7 @@ std::unique_ptr<SqlStatement> parse_statement_drop(Lexer& lexer)
                     std::move(table_name));
     return std::unique_ptr<SqlStatement>(drop_statement.release());
 }
+} // namespace
 
 ParseResult rdb::parser::parse_sql(std::string_view sql_inquiry)
 {

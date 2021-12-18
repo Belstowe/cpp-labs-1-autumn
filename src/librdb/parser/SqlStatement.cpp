@@ -1,66 +1,61 @@
 #include "SqlStatement.hpp"
 
-std::ostream&
-rdb::parser::operator<<(std::ostream& os, const rdb::parser::Value& value)
+namespace rdb::parser {
+std::ostream& operator<<(std::ostream& os, const Value& value)
 {
     std::visit([&os](auto&& v) { os << v; }, value);
     return os;
 }
 
-std::ostream&
-rdb::parser::operator<<(std::ostream& os, const rdb::parser::Operand& operand)
+std::ostream& operator<<(std::ostream& os, const Operand& operand)
 {
     os << operand.val;
     return os;
 }
 
-std::ostream& rdb::parser::operator<<(
-        std::ostream& os, const rdb::parser::Expression& expression)
+std::ostream& operator<<(std::ostream& os, const Expression& expression)
 {
     os << expression.loperand << " " << expression.operation << " "
        << expression.roperand;
     return os;
 }
 
-std::ostream& rdb::parser::operator<<(
-        std::ostream& os, const rdb::parser::SqlStatement& statement)
+std::ostream& operator<<(std::ostream& os, const SqlStatement& statement)
 {
     statement.print(os);
     return os;
 }
 
-rdb::parser::Operand::Operand(Value&& val, const bool is_id)
-    : is_id{is_id}, val{val}
+Operand::Operand(Value&& val, const bool is_id) : is_id{is_id}, val{val}
 {
 }
 
-rdb::parser::Operand::Operand(long&& val) : is_id{false}, val{val}
+Operand::Operand(long&& val) : is_id{false}, val{val}
 {
 }
 
-rdb::parser::CreateTableStatement::CreateTableStatement(
+CreateTableStatement::CreateTableStatement(
         std::string&& table_name, std::vector<ColumnDef>&& column_def_seq)
     : table_name_{table_name}, column_def_seq_{column_def_seq}
 {
 }
 
-const std::string& rdb::parser::CreateTableStatement::table_name() const
+const std::string& CreateTableStatement::table_name() const
 {
     return table_name_;
 }
 
-const rdb::parser::ColumnDef&
-rdb::parser::CreateTableStatement::column_def(size_t index) const
+const ColumnDef& CreateTableStatement::column_def(size_t index) const
 {
     return column_def_seq_.at(index);
 }
 
-size_t rdb::parser::CreateTableStatement::columns_defined() const
+size_t CreateTableStatement::columns_defined() const
 {
     return column_def_seq_.size();
 }
 
-void rdb::parser::CreateTableStatement::print(std::ostream& os) const
+void CreateTableStatement::print(std::ostream& os) const
 {
     os << "\"create_statement\":\n\t";
     os << "{ \n\t";
@@ -76,7 +71,7 @@ void rdb::parser::CreateTableStatement::print(std::ostream& os) const
     os << "] }";
 }
 
-rdb::parser::InsertStatement::InsertStatement(
+InsertStatement::InsertStatement(
         std::string&& table_name,
         std::vector<std::string>&& column_name_seq,
         std::vector<Value>&& value_seq)
@@ -86,28 +81,27 @@ rdb::parser::InsertStatement::InsertStatement(
 {
 }
 
-const std::string& rdb::parser::InsertStatement::table_name() const
+const std::string& InsertStatement::table_name() const
 {
     return table_name_;
 }
 
-const std::string& rdb::parser::InsertStatement::column_name(size_t index) const
+const std::string& InsertStatement::column_name(size_t index) const
 {
     return column_name_seq_.at(index);
 }
 
-size_t rdb::parser::InsertStatement::columns_defined() const
+size_t InsertStatement::columns_defined() const
 {
     return column_name_seq_.size();
 }
 
-const rdb::parser::Value&
-rdb::parser::InsertStatement::value(size_t index) const
+const Value& InsertStatement::value(size_t index) const
 {
     return value_seq_.at(index);
 }
 
-void rdb::parser::InsertStatement::print(std::ostream& os) const
+void InsertStatement::print(std::ostream& os) const
 {
     os << "\"insert_statement\":\n\t";
     os << "{ \n\t";
@@ -123,7 +117,7 @@ void rdb::parser::InsertStatement::print(std::ostream& os) const
     os << "] }";
 }
 
-rdb::parser::SelectStatement::SelectStatement(
+SelectStatement::SelectStatement(
         std::string&& table_name,
         std::vector<std::string>&& column_name_seq,
         const Expression& expression)
@@ -134,27 +128,27 @@ rdb::parser::SelectStatement::SelectStatement(
 {
 }
 
-const std::string& rdb::parser::SelectStatement::table_name() const
+const std::string& SelectStatement::table_name() const
 {
     return table_name_;
 }
 
-const std::string& rdb::parser::SelectStatement::column_name(size_t index) const
+const std::string& SelectStatement::column_name(size_t index) const
 {
     return column_name_seq_.at(index);
 }
 
-size_t rdb::parser::SelectStatement::columns_defined() const
+size_t SelectStatement::columns_defined() const
 {
     return column_name_seq_.size();
 }
 
-bool rdb::parser::SelectStatement::has_expression() const
+bool SelectStatement::has_expression() const
 {
     return has_expression_cond_;
 }
 
-const rdb::parser::Expression& rdb::parser::SelectStatement::expression() const
+const Expression& SelectStatement::expression() const
 {
     if (has_expression_cond_) {
         return expression_;
@@ -162,7 +156,7 @@ const rdb::parser::Expression& rdb::parser::SelectStatement::expression() const
     throw std::runtime_error("SelectStatement: No expression defined");
 }
 
-void rdb::parser::SelectStatement::print(std::ostream& os) const
+void SelectStatement::print(std::ostream& os) const
 {
     os << "\"select_statement\":\n\t";
     os << "{ \n\t";
@@ -182,7 +176,7 @@ void rdb::parser::SelectStatement::print(std::ostream& os) const
     os << "}";
 }
 
-rdb::parser::DeleteFromStatement::DeleteFromStatement(
+DeleteFromStatement::DeleteFromStatement(
         std::string&& table_name, const Expression& expression)
     : table_name_{table_name},
       has_expression_cond_{expression.operation != "N"},
@@ -190,18 +184,17 @@ rdb::parser::DeleteFromStatement::DeleteFromStatement(
 {
 }
 
-const std::string& rdb::parser::DeleteFromStatement::table_name() const
+const std::string& DeleteFromStatement::table_name() const
 {
     return table_name_;
 }
 
-bool rdb::parser::DeleteFromStatement::has_expression() const
+bool DeleteFromStatement::has_expression() const
 {
     return has_expression_cond_;
 }
 
-const rdb::parser::Expression&
-rdb::parser::DeleteFromStatement::expression() const
+const Expression& DeleteFromStatement::expression() const
 {
     if (has_expression_cond_) {
         return expression_;
@@ -209,7 +202,7 @@ rdb::parser::DeleteFromStatement::expression() const
     throw std::runtime_error("DeleteFromStatement: No expression defined");
 }
 
-void rdb::parser::DeleteFromStatement::print(std::ostream& os) const
+void DeleteFromStatement::print(std::ostream& os) const
 {
     os << "\"delete_statement\":\n\t";
     os << "{ \n\t";
@@ -221,20 +214,21 @@ void rdb::parser::DeleteFromStatement::print(std::ostream& os) const
     os << "\n\t}";
 }
 
-rdb::parser::DropTableStatement::DropTableStatement(std::string&& table_name)
+DropTableStatement::DropTableStatement(std::string&& table_name)
     : table_name_{table_name}
 {
 }
 
-const std::string& rdb::parser::DropTableStatement::table_name() const
+const std::string& DropTableStatement::table_name() const
 {
     return table_name_;
 }
 
-void rdb::parser::DropTableStatement::print(std::ostream& os) const
+void DropTableStatement::print(std::ostream& os) const
 {
     os << "\"drop_statement\":\n\t";
     os << "{ \n\t";
     os << "\"table_name\": " << table_name_ << "\n\t";
     os << "}";
 }
+} // namespace rdb::parser

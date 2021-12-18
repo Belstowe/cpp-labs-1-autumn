@@ -47,8 +47,8 @@ int main(int argc, char* argv[])
 
     auto sql(rdb::parser::parse_sql(sql_inquiry));
 
-    *output_stream << sql._sql_script << "\n";
-    for (auto&& error : sql._errors) {
+    *output_stream << sql.sql_script << "\n";
+    for (auto&& error : sql.errors) {
         std::clog << error << "\n";
     }
 

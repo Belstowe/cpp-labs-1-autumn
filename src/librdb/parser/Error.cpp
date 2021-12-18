@@ -5,26 +5,26 @@ using rdb::parser::ErrorType;
 using rdb::parser::TokenType;
 
 Error::Error(Token token, ErrorType type, TokenType expected)
-    : _token{token}, _type{type}, _expected{expected}
+    : token_{token}, type_{type}, expected_{expected}
 {
 }
 
 ErrorType Error::type() const
 {
-    return _type;
+    return type_;
 }
 
 TokenType Error::token_type() const
 {
-    return _token.type;
+    return token_.type;
 }
 
 std::ostream& rdb::parser::operator<<(std::ostream& os, const Error& error)
 {
-    os << "! " << error._token << ":\n";
-    os << "  Error::" << error._type;
-    if (error._expected != TokenType::Unknown) {
-        os << " (expected " << error._expected << ")";
+    os << "! " << error.token_ << ":\n";
+    os << "  Error::" << error.type_;
+    if (error.expected_ != TokenType::Unknown) {
+        os << " (expected " << error.expected_ << ")";
     }
     return os;
 }

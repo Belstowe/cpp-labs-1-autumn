@@ -6,21 +6,22 @@ using rdb::parser::Error;
 using rdb::parser::ErrorType;
 using rdb::parser::Lexer;
 using rdb::parser::ParseResult;
-using rdb::parser::SqlStatement;
+using rdb::parser::SqlStatementPtr;
 using rdb::parser::Token;
 using rdb::parser::TokenType;
 
 std::ostream&
 rdb::parser::operator<<(std::ostream& os, const rdb::parser::SqlScript& sql)
 {
-    for (auto&& statement_ptr : sql._sql_statements) {
+    for (auto&& statement_ptr : sql.sql_statements) {
         auto* statement = statement_ptr.get();
         os << *statement << "\n";
     }
     return os;
 }
 
-std::string parse_token(Lexer& lexer, TokenType&& expected_token)
+namespace {
+std::string parse_token(Lexer& lexer, const TokenType& expected_token)
 {
     Token token = lexer.get();
     if (token.type != expected_token) {
@@ -34,7 +35,8 @@ std::string parse_token(Lexer& lexer, TokenType&& expected_token)
 }
 
 template <typename T>
-rdb::parser::Value convert_lexeme_to_var(Token& token, TokenType&& token_type)
+rdb::parser::Value
+convert_lexeme_to_var(Token& token, const TokenType& token_type)
 {
     T result{};
     auto [ptr, ec]{std::from_chars(
@@ -261,7 +263,7 @@ void parse_argument_from(
     }
 }
 
-std::unique_ptr<SqlStatement> parse_statement_create(Lexer& lexer)
+SqlStatementPtr parse_statement_create(Lexer& lexer)
 {
     std::string table_name;
     std::vector<rdb::parser::ColumnDef> column_def_seq;
@@ -274,10 +276,10 @@ std::unique_ptr<SqlStatement> parse_statement_create(Lexer& lexer)
     std::unique_ptr<rdb::parser::CreateTableStatement> create_table_statement
             = std::make_unique<rdb::parser::CreateTableStatement>(
                     std::move(table_name), std::move(column_def_seq));
-    return std::unique_ptr<SqlStatement>(create_table_statement.release());
+    return SqlStatementPtr(create_table_statement.release());
 }
 
-std::unique_ptr<SqlStatement> parse_statement_insert(Lexer& lexer)
+SqlStatementPtr parse_statement_insert(Lexer& lexer)
 {
     std::string table_name;
     std::vector<std::string> column_name_seq;
@@ -293,10 +295,10 @@ std::unique_ptr<SqlStatement> parse_statement_insert(Lexer& lexer)
                     std::move(table_name),
                     std::move(column_name_seq),
                     std::move(value_seq));
-    return std::unique_ptr<SqlStatement>(insert_statement.release());
+    return SqlStatementPtr(insert_statement.release());
 }
 
-std::unique_ptr<SqlStatement> parse_statement_select(Lexer& lexer)
+SqlStatementPtr parse_statement_select(Lexer& lexer)
 {
     std::vector<std::string> column_name_seq;
     std::string table_name;
@@ -312,10 +314,10 @@ std::unique_ptr<SqlStatement> parse_statement_select(Lexer& lexer)
                     std::move(table_name),
                     std::move(column_name_seq),
                     expression);
-    return std::unique_ptr<SqlStatement>(select_statement.release());
+    return SqlStatementPtr(select_statement.release());
 }
 
-std::unique_ptr<SqlStatement> parse_statement_delete(Lexer& lexer)
+SqlStatementPtr parse_statement_delete(Lexer& lexer)
 {
     std::string table_name;
     rdb::parser::Expression expression{0, "N", 0};
@@ -327,10 +329,10 @@ std::unique_ptr<SqlStatement> parse_statement_delete(Lexer& lexer)
     std::unique_ptr<rdb::parser::DeleteFromStatement> delete_statement
             = std::make_unique<rdb::parser::DeleteFromStatement>(
                     std::move(table_name), expression);
-    return std::unique_ptr<SqlStatement>(delete_statement.release());
+    return SqlStatementPtr(delete_statement.release());
 }
 
-std::unique_ptr<SqlStatement> parse_statement_drop(Lexer& lexer)
+SqlStatementPtr parse_statement_drop(Lexer& lexer)
 {
     std::string table_name;
 
@@ -341,8 +343,9 @@ std::unique_ptr<SqlStatement> parse_statement_drop(Lexer& lexer)
     std::unique_ptr<rdb::parser::DropTableStatement> drop_statement
             = std::make_unique<rdb::parser::DropTableStatement>(
                     std::move(table_name));
-    return std::unique_ptr<SqlStatement>(drop_statement.release());
+    return SqlStatementPtr(drop_statement.release());
 }
+} // namespace
 
 ParseResult rdb::parser::parse_sql(std::string_view sql_inquiry)
 {
@@ -356,27 +359,27 @@ ParseResult rdb::parser::parse_sql(std::string_view sql_inquiry)
             try {
                 switch (token.type) {
                 case TokenType::KwCreate:
-                    sql._sql_script._sql_statements.emplace_back(
+                    sql.sql_script.sql_statements.emplace_back(
                             parse_statement_create(lexer));
                     break;
 
                 case TokenType::KwDelete:
-                    sql._sql_script._sql_statements.emplace_back(
+                    sql.sql_script.sql_statements.emplace_back(
                             parse_statement_delete(lexer));
                     break;
 
                 case TokenType::KwInsert:
-                    sql._sql_script._sql_statements.emplace_back(
+                    sql.sql_script.sql_statements.emplace_back(
                             parse_statement_insert(lexer));
                     break;
 
                 case TokenType::KwSelect:
-                    sql._sql_script._sql_statements.emplace_back(
+                    sql.sql_script.sql_statements.emplace_back(
                             parse_statement_select(lexer));
                     break;
 
                 case TokenType::KwDrop:
-                    sql._sql_script._sql_statements.emplace_back(
+                    sql.sql_script.sql_statements.emplace_back(
                             parse_statement_drop(lexer));
                     break;
 
@@ -389,7 +392,7 @@ ParseResult rdb::parser::parse_sql(std::string_view sql_inquiry)
                     throw error;
 
                 default:
-                    sql._errors.push_back(error);
+                    sql.errors.push_back(error);
                     if (error.token_type() != TokenType::Semicolon) {
                         do {
                             token = lexer.get();
@@ -405,7 +408,7 @@ ParseResult rdb::parser::parse_sql(std::string_view sql_inquiry)
             token = lexer.peek();
         }
     } catch (const Error& error) {
-        sql._errors.push_back(error);
+        sql.errors.push_back(error);
     }
 
     return sql;

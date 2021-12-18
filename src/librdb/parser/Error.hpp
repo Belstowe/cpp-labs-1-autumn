@@ -23,9 +23,9 @@ public:
     TokenType token_type() const;
 
 private:
-    Token _token;
-    ErrorType _type;
-    TokenType _expected;
+    Token token_;
+    ErrorType type_;
+    TokenType expected_;
 
     friend std::ostream&
     operator<<(std::ostream& os, const rdb::parser::Error& error);

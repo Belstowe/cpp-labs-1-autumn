@@ -20,12 +20,12 @@ struct Operand {
 
 std::ostream& operator<<(std::ostream& os, const Operand& operand);
 
-typedef struct _column_def {
+typedef struct t_column_def {
     std::string column_name;
     TokenType type_name;
 } ColumnDef;
 
-typedef struct _expression {
+typedef struct t_expression {
     Operand loperand;
     std::string operation;
     Operand roperand;
@@ -43,8 +43,8 @@ std::ostream& operator<<(std::ostream& os, const SqlStatement& statement);
 
 class CreateTableStatement : public SqlStatement {
 private:
-    std::string _table_name;
-    std::vector<ColumnDef> _column_def_seq;
+    std::string table_name_;
+    std::vector<ColumnDef> column_def_seq_;
 
 public:
     ~CreateTableStatement() = default;
@@ -57,9 +57,9 @@ public:
 
 class InsertStatement : public SqlStatement {
 private:
-    std::string _table_name;
-    std::vector<std::string> _column_name_seq;
-    std::vector<Value> _value_seq;
+    std::string table_name_;
+    std::vector<std::string> column_name_seq_;
+    std::vector<Value> value_seq_;
 
 public:
     ~InsertStatement() = default;
@@ -74,10 +74,10 @@ public:
 
 class SelectStatement : public SqlStatement {
 private:
-    std::string _table_name;
-    std::vector<std::string> _column_name_seq;
-    bool _has_expression_cond;
-    Expression _expression;
+    std::string table_name_;
+    std::vector<std::string> column_name_seq_;
+    bool has_expression_cond_;
+    Expression expression_;
 
 public:
     ~SelectStatement() = default;
@@ -95,9 +95,9 @@ public:
 
 class DeleteFromStatement : public SqlStatement {
 private:
-    std::string _table_name;
-    bool _has_expression_cond;
-    Expression _expression;
+    std::string table_name_;
+    bool has_expression_cond_;
+    Expression expression_;
 
 public:
     ~DeleteFromStatement() = default;
@@ -111,7 +111,7 @@ public:
 
 class DropTableStatement : public SqlStatement {
 private:
-    std::string _table_name;
+    std::string table_name_;
 
 public:
     ~DropTableStatement() = default;
